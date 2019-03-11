@@ -24,7 +24,7 @@ Vec3f PathTracer::BREFImportanceSample(Vec3f &direction, float Ns)
 	}
 	else
 	{
-		front = normalize(Vec3f(0, direction.z, -direction.y));
+		front = normalize(Vec3f(0, -direction.z, direction.y));
 	}
 	right = cross(direction, front);
 
