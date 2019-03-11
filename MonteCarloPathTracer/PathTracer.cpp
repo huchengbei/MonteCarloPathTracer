@@ -9,8 +9,11 @@ using namespace std;
 
 Vec3f PathTracer::BREFImportanceSample(Vec3f &direction, float Ns)
 {
-	float phi = (float)rand() / RAND_MAX * 2 * PI;
-	float theta = (float)((Ns < 0) ? asin(sqrt((float)rand() / RAND_MAX)) : acos(pow((float)rand() / RAND_MAX, 1 / (Ns + 1))));
+	float r1, r2;
+	r1 = (float)rand() / RAND_MAX;
+	r2 = (float)rand() / RAND_MAX;
+	float phi = r1 * 2 * PI;
+	float theta = (float)((Ns < 0) ? asin(sqrt(r2)) : acos(pow(r2, 1 / (Ns + 1))));
 
 	Vec3f sample(sin(theta)*cos(phi), cos(theta), sin(theta) * sin(phi));
 
