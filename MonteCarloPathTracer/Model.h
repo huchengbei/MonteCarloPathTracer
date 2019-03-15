@@ -4,6 +4,7 @@
 #include "map"
 
 #include "Box.h"
+#include "Light.cpp"
 #include "Material.cpp"
 #include "MetaClass.h"
 
@@ -15,7 +16,8 @@ class Model
 {
 public:
 	vector<Vec3f> vertexs;
-	vector<Vec3f> normals;
+	vector<Vec3f> normals;	
+	vector<Light> lights;
 
 	Box box;
 	vector<Triangle*> triangles;

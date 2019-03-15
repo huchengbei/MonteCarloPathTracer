@@ -53,8 +53,8 @@ void loadScene(string path)
 	Vec3f dy = Vec3f(2, 0, 0);
 	Vec3f dx = Vec3f(0, 0, -2);
 	Color3f emission = Color3f(50, 50, 50);
-	scene->lights.push_back(Light(pos, dx, dy, emission));
-	scene->lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
+	//scene->model->lights.push_back(Light(pos, dx, dy, emission));
+	//scene->model->lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
 
 	scene->init();
 	initWindow();

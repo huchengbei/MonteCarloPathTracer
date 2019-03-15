@@ -143,9 +143,9 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 		}
 	}
 
-	if (!scene.lights.empty())
+	if (!scene.model->lights.empty())
 	{
-		for (Light &light : scene.lights)
+		for (Light &light : scene.model->lights)
 		{
 			Color3f rgb;
 			for (int i = 0; i < light_sample_num; i++)
@@ -191,7 +191,6 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 			}
 			directIllumination += rgb;
 		}
-		// directIllumination.slip();
 	}
 
 	color = material.Le + ambientIllumination + indirectIllumination + directIllumination;
@@ -206,7 +205,7 @@ vector<float> PathTracer::render(Scene& scene)
 		return scene.colors;
 	}
 	auto t_start = std::chrono::high_resolution_clock::now();
-#pragma omp parallel for schedule(dynamic, 1)
+#pragma omp parallel for schedule(dynamic, 2)
 	for (int y = 0; y < scene.height; ++y)
 	{
 		for (int x = 0; x < scene.width; ++x)
