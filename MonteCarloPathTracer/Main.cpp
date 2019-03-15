@@ -73,7 +73,7 @@ void initWindow()
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowSize(width, height);
-	glutInitWindowPosition(50, 80);
+	glutInitWindowPosition(200, 200);
 	glutCreateWindow("Monte Carlo Path Tracer");
 	glutDisplayFunc(render);
 	glutIdleFunc(update);

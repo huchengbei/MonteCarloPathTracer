@@ -76,13 +76,13 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material &material, V
 
 		float f0 = (ni - nt) / (ni + nt);
 		f0 *= f0;
-		float fresnel = (float)(f0 + (1 - f0) * pow(1.0 - cosTheta, 5));
+		float fresnel = (float)(f0 + (1 - f0) * pow(1.0 - abs(cosTheta), 5));
 
 		if (fresnel < (float)rand() / RAND_MAX)
 		{
 			if (ray.refract(tNormal, ni / nt, direction))
 				return Ray(point, direction, Ray::SOURCE::TRANSMISSION);
-			else if (ray.reflect(normal, direction))
+			else if (ray.reflect(tNormal, direction))
 			{
 				return Ray(point, direction, Ray::SOURCE::SPECULAR_REFLECT);
 			}
@@ -109,7 +109,7 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 	Material material;
 	Vec3f normal;
 	Color3f color, ambientIllumination, indirectIllumination, directIllumination;
-	// todo @chengbei calculate intersection
+
 	bool is_intersected = intersect(scene, ray, point, material, normal);
 	if (!is_intersected)
 	{
@@ -135,13 +135,12 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 				indirectIllumination *= material.Ks;
 				break;
 			case Ray::SOURCE::TRANSMISSION:
-				indirectIllumination *= material.Tf;
+				indirectIllumination *= 1;// material.Tf;
 				break;
 			default:
 				break;
 			}
 		}
-		color += indirectIllumination;
 	}
 
 	if (!scene.lights.empty())
@@ -199,12 +198,12 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 
 vector<float> PathTracer::render(Scene& scene)
 {
-	if (iter_cnt == 0)
+	++iter_cnt;
+	if (iter_cnt > maxRenderDepth)
 	{
-		// todo: do something @chengbei
+		return scene.colors;
 	}
 	auto t_start = std::chrono::high_resolution_clock::now();
-	++iter_cnt;
 //#pragma omp parallel for schedule(dynamic, 1)
 	for (int y = 0; y < scene.height; ++y)
 	{

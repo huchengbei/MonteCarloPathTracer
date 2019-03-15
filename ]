@@ -29,13 +29,13 @@ public:
 	void buildTree(vector<Triangle *> &triangles)
 	{
 		int size = (int)(triangles.size());
-
 		splitAxis = getSplitAxis(triangles);
 		
 		if (size == 1)
 		{
 			isLeaf = true;
 			node = triangles[0];
+			// box = node->getBox();
 			left = nullptr;
 			right = nullptr;
 		}
@@ -47,11 +47,15 @@ public:
 			float minVal = FLT_MAX;
 			float maxVal = -FLT_MAX;
 
-			minVal = box.getMinCoord(splitAxis);
-			maxVal = box.getMaxCoord(splitAxis);
+			Box bbox;
+			for (Triangle* &tri : triangles)
+			{
+				bbox = tri->getBox();
+				minVal = min(minVal, bbox.getMinCoord(splitAxis));
+				maxVal = max(maxVal, bbox.getMaxCoord(splitAxis));
+			}
 			float pivot = (maxVal + minVal) / 2;
 
-			Box bbox;
 			for (int i = 0; i < triangles.size(); i++)
 			{
 				bbox = triangles[i]->getBox();

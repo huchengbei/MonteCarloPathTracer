@@ -13,6 +13,7 @@ public:
 	int px_sample_num = 1;
 	int light_sample_num = 3;
 	int max_path_depth = 5;
+	int maxRenderDepth = 100;
 
 	Vec3f BREFImportanceSample(Vec3f &direction, float Ns, REFLECT_TYPE type);
 
