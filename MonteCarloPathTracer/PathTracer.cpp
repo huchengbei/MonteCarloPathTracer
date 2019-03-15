@@ -208,6 +208,8 @@ vector<float> PathTracer::render(Scene& scene)
 #pragma omp parallel for schedule(dynamic, 2)
 	for (int y = 0; y < scene.height; ++y)
 	{
+		if(y %10 == 0)
+			cout << "line: " << y << endl;
 		for (int x = 0; x < scene.width; ++x)
 		{
 			Color3f pxColor;

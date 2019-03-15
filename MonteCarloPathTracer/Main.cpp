@@ -7,6 +7,7 @@ using namespace std;
 
 int width;
 int height;
+int MaxRenderCnt = 100;
 float fov;
 PathTracer pathTracer;
 Scene*  scene;
@@ -15,7 +16,6 @@ void initWindow();
 void render()
 {
 	static int cnt = 1;
-	cout << cnt++ << endl;
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -23,22 +23,30 @@ void render()
 	glLoadIdentity();
 	gluOrtho2D(0, width, 0, height);
 
-	vector<float> colors = pathTracer.render((*scene));
+	if (cnt <= MaxRenderCnt)
+	{
+		cout <<"start "  << cnt << " itera" << endl;
+		pathTracer.render((*scene));
+		cout <<"end "  << cnt++ << " itera" << endl;
+	}
 
 	glRasterPos2i(0, 0);
-	glDrawPixels(width, height, GL_RGB, GL_FLOAT, (GLvoid *)colors.data());
+	glDrawPixels(width, height, GL_RGB, GL_FLOAT, (GLvoid *)scene->colors.data());
 
 	glFlush();
 }
 
 void loadScene(string path)
 {
-	width = 200;
-	height = 200;
+	cout << "Load Scene..." << endl;
+	width = 100;
+	height = 100;
 	fov = 70;
 
 	scene = new Scene(width, height);
+	cout << "Load Model..." << endl;
 	scene->model = new Model(path);
+	cout << "Load Model...finished" << endl;
 	Model* &model = scene->model;
 
 	Point3f center = (model->box.high + model->box.low) / 2;
@@ -46,17 +54,18 @@ void loadScene(string path)
 	Point3f pos = Point3f(center.x, center.y, center.z + 1.5 * scale);
 	scene->camera = new Camera(pos, center, Vec3f(0, 1, 0));
 	Camera* &camera = scene->camera;
-
 	camera->setViewPort(fov, (float)height / (float)width);
 
 	pos = Point3f(-1, 9.8, 1);
 	Vec3f dy = Vec3f(2, 0, 0);
 	Vec3f dx = Vec3f(0, 0, -2);
 	Color3f emission = Color3f(50, 50, 50);
-	//scene->model->lights.push_back(Light(pos, dx, dy, emission));
-	//scene->model->lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
+	scene->model->lights.push_back(Light(pos, dx, dy, emission));
+	scene->model->lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
 
+	cout << "Init Scene & buildTree..." << endl;
 	scene->init();
+	cout << "Init Scene & buildTree...finished" << endl;
 	initWindow();
 }
 void update()
