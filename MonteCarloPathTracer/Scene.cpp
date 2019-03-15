@@ -15,7 +15,7 @@ public:
 	int width, height;
 	Color3f ambient;
 	Camera camera;
-	Model model;
+	Model* model;
 	KDTree* kdTree = new KDTree();
 	vector<float> colors;
 	vector<Light> lights;
@@ -33,7 +33,7 @@ public:
 		colors.clear();
 		colors.resize(3 * width * height);
 		ambient = Color3f(0.2, 0.2, 0.2);
-		kdTree->buildTree(model.triangles);
+		kdTree->buildTree(model->triangles);
 	}
 
 	vector<Ray> getRays(int x, int y, int px_sample_num)

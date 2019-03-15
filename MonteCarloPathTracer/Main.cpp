@@ -38,11 +38,11 @@ void loadScene(string path)
 	fov = 70;
 
 	scene = new Scene(width, height);
-	scene->model = Model(path);
-	Model &model = scene->model;
+	scene->model = new Model(path);
+	Model* &model = scene->model;
 
-	Point3f center = (model.box.high + model.box.low) / 2;
-	float scale = length(model.box.high - model.box.low) / 2;
+	Point3f center = (model->box.high + model->box.low) / 2;
+	float scale = length(model->box.high - model->box.low) / 2;
 	Point3f pos = Point3f(center.x, center.y, center.z + 1.5 * scale);
 	scene->camera = Camera(pos, center, Vec3f(0, 1, 0));
 	Camera &camera = scene->camera;
