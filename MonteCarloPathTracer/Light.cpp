@@ -1,5 +1,5 @@
 #pragma once
-#include "MetaClass.cpp"
+#include "MetaClass.h"
 
 class Light
 {
@@ -23,5 +23,9 @@ public:
 		Le = emission;
 		dx = dX;
 		dy = dY;
+
+		normal = cross(dx, dy);
+		area = length(normal);
+		normal = normalize(normal);
 	}
 };

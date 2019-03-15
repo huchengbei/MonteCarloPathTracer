@@ -7,12 +7,14 @@
 class PathTracer
 {
 public:
+	enum REFLECT_TYPE{SPECULAR_REFLECT, DIFFUSE_REFLECT};
+
 	int iter_cnt = 0;
 	int px_sample_num = 1;
 	int light_sample_num = 3;
 	int max_path_depth = 5;
 
-	Vec3f BREFImportanceSample(Vec3f &direction, float Ns);
+	Vec3f BREFImportanceSample(Vec3f &direction, float Ns, REFLECT_TYPE type);
 
 	Ray monteCarloSample(Ray &ray, Point3f &point, Material &material, Vec3f &normal);
 

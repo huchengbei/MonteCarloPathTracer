@@ -1,7 +1,6 @@
-#pragma once
 #include "Box.h"
 #include "algorithm"
-#include "MetaClass.cpp"
+#include "MetaClass.h"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "MetaClass.cpp"
+#include "MetaClass.h"
 #include "Ray.cpp"
 
 class Camera

@@ -1,5 +1,5 @@
 #pragma once
-#include "MetaClass.cpp"
+#include "MetaClass.h"
 #include "string"
 
 class Material

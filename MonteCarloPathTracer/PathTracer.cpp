@@ -7,13 +7,25 @@
 
 using namespace std;
 
-Vec3f PathTracer::BREFImportanceSample(Vec3f &direction, float Ns)
+Vec3f PathTracer::BREFImportanceSample(Vec3f &direction, float Ns, REFLECT_TYPE type)
 {
 	float r1, r2;
 	r1 = (float)rand() / RAND_MAX;
 	r2 = (float)rand() / RAND_MAX;
 	float phi = r1 * 2 * PI;
-	float theta = (float)((Ns < 0) ? asin(sqrt(r2)) : acos(pow(r2, 1 / (Ns + 1))));
+	float theta;
+
+	switch (type)
+	{
+	case PathTracer::SPECULAR_REFLECT:
+		theta = (float)acos(pow(r2, 1 / (Ns + 1)));
+		break;
+	case PathTracer::DIFFUSE_REFLECT:
+		theta = (float)asin(sqrt(r2));
+		break;
+	default:
+		break;
+	}
 
 	Vec3f sample(sin(theta)*cos(phi), cos(theta), sin(theta) * sin(phi));
 
@@ -70,7 +82,7 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material &material, V
 		{
 			if (ray.refract(tNormal, ni / nt, direction))
 				return Ray(point, direction, Ray::SOURCE::TRANSMISSION);
-			else if (ray.refrect(normal, direction))
+			else if (ray.reflect(normal, direction))
 			{
 				return Ray(point, direction, Ray::SOURCE::SPECULAR_REFLECT);
 			}
@@ -80,13 +92,13 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material &material, V
 	if (k1 / k2 < (float)rand() / RAND_MAX)
 	{
 		Vec3f reflect;
-		ray.refrect(normal, reflect);
-		direction = BREFImportanceSample(reflect, material.Ns);
+		ray.reflect(normal, reflect);
+		direction = BREFImportanceSample(reflect, material.Ns, REFLECT_TYPE::SPECULAR_REFLECT);
 		return Ray(point, direction, Ray::SOURCE::SPECULAR_REFLECT);
 	}
 	else
 	{
-		direction = BREFImportanceSample(normal, material.Ns);
+		direction = BREFImportanceSample(normal, material.Ns, REFLECT_TYPE::DIFFUSE_REFLECT);
 		return Ray(point, direction, Ray::SOURCE::DIFFUSE_REFLECT);
 	}
 }
@@ -149,13 +161,13 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 				Ray lightRay = Ray(point, lightDirection);
 				lightRay.tmax = lightLength;
 
-				is_intersected = intersect(scene, ray, point, material, normal);
+				is_intersected = intersect(scene, ray);
 				if (is_intersected)
 				{
 					lightDirection = normalize(lightDirection);
 					float consIn = max(dot(normal, lightDirection), 0.0f);
 					float consOut = max(dot(-lightDirection, light.normal), 0.0f);
-					float geoFactor = consIn * consOut / lightLength;
+					float geoFactor = consIn * consOut / (lightLength * lightLength);
 
 					Vec3f intensity = geoFactor * light.area * light.Le / (float)light_sample_num;
 
@@ -193,7 +205,7 @@ vector<float> PathTracer::render(Scene& scene)
 	}
 	auto t_start = std::chrono::high_resolution_clock::now();
 	++iter_cnt;
-#pragma omp parallel for schedule(dynamic, 1)
+//#pragma omp parallel for schedule(dynamic, 1)
 	for (int y = 0; y < scene.height; ++y)
 	{
 		for (int x = 0; x < scene.width; ++x)

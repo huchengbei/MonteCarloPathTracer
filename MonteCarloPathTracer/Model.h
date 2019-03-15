@@ -5,7 +5,7 @@
 
 #include "Box.h"
 #include "Material.cpp"
-#include "MetaClass.cpp"
+#include "MetaClass.h"
 
 using namespace std;
 

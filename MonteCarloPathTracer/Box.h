@@ -1,6 +1,6 @@
 #pragma once
 #include "algorithm"
-#include "MetaClass.cpp"
+#include "MetaClass.h"
 
 class Box {
 public:

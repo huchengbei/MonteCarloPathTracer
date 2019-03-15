@@ -15,8 +15,10 @@ Triangle::Triangle(Model* model, int vertex_ids[3], int normal_ids[3])
 	edge1 = vertex[1] - vertex[0];
 	edge2 = vertex[2] - vertex[0];
 	normal = normalize(cross(edge1, edge2));
+	point = vertex[0];
 
 	barycentric = Mat4(vertex[0], vertex[1], vertex[2]);
+	barycentric.inverse();
 	setBox();
 }
 
@@ -97,7 +99,7 @@ bool Model::LoadMaterial(string path, map<string, Material> &materialTable)
 		else if (type == "Ks")
 			file >> material.Ks.x >> material.Ks.y >> material.Ks.z;
 		else if (type == "Ke")
-			file >> material.Le.x >> material.Le.y >> material.Le.z;
+			file >> material.Le.r >> material.Le.g >> material.Le.b;
 		else if (type == "Ns")
 			file >> material.Ns;
 		else if (type == "Ni")
@@ -106,8 +108,6 @@ bool Model::LoadMaterial(string path, map<string, Material> &materialTable)
 			file >> material.Tf.x >> material.Tf.y >> material.Tf.z;
 		else if (type == "illum")
 			file >> material.illum;
-		else if (type == "Tf")
-			file >> material.Tf.x >> material.Tf.y >> material.Tf.z;
 		else
 			file.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
 	}
@@ -145,7 +145,7 @@ bool Model::Load(string path)
 		{
 			string mtlFileName;
 			file >> mtlFileName;
-			int pos = (int)path.find_last_of('/');
+			int pos = (int)(path.find_last_of('/'));
 			string mtlPath = path.substr(0, pos + 1) + mtlFileName;
 			if (!LoadMaterial(mtlPath, materialTable))
 			{

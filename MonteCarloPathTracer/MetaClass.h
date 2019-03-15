@@ -5,6 +5,8 @@
 constexpr float PI = (float)3.1415;
 constexpr float EPS = (float)1e-5f;
 
+inline bool isEqualf(float a, float b);
+
 class Vec3f
 {
 public:
@@ -74,10 +76,18 @@ public:
 	friend inline Vec3f operator / (float num, const Vec3f &u) { return Vec3f(num / u.x, num / u.y, num / u.z); }
 	friend inline Vec3f operator / (const Vec3f &u, const Vec3f &v) { return Vec3f(u.x / v.x, u.y / v.y, u.z / v.z); }
 
-	inline bool operator == (const Vec3f &u) { return x == u.x && y == u.y && z == u.z; }
-	inline bool operator != (const Vec3f &u) { return !(x == u.x && y == u.y && z == u.z); }
-
+	// inline bool operator == (const Vec3f &u) { return x == u.x && y == u.y && z == u.z; }
+	// inline bool operator != (const Vec3f &u) { return !(x == u.x && y == u.y && z == u.z); }
+	inline bool operator == (const Vec3f &u) { return isEqualf(x, u.x) && isEqualf(y, u.y) && isEqualf(z, u.z); }
+	inline bool operator != (const Vec3f &u) { return !(isEqualf(x, u.x) && isEqualf(y, u.y) && isEqualf(z, u.z)); }
 };
+
+inline bool isEqualf(float a, float b)
+{
+	if (fabs(a - b) < EPS)
+		return true;
+	return false;
+}
 
 inline Vec3f cross(const Vec3f &u, const Vec3f &v)
 {

@@ -1,6 +1,5 @@
 #pragma once
-#include "MetaClass.cpp"
-
+#include "MetaClass.h"
 
 class Ray {
 public:
@@ -17,10 +16,10 @@ public:
 	Ray(Point3f pos, Vec3f dir)
 	{
 		position = pos;
-		direction = dir;
+		direction = normalize(dir);
 		source = SOURCE::NONE;
 		inverseDirection = 1.0 / direction;
-		tmin = 0;
+		tmin = EPS;
 		tmax = FLT_MAX;
 	}
 
@@ -30,13 +29,13 @@ public:
 		direction = dir;
 		source = s;
 		inverseDirection = 1.0 / direction;
-		tmin = 0;
+		tmin = EPS;
 		tmax = FLT_MAX;
 	}
 
-	bool refrect(const Vec3f &normal, Vec3f &refrectDirection)
+	bool reflect(const Vec3f &normal, Vec3f &reflectDirection)
 	{
-		refrectDirection = direction - 2.0f * normal * dot(normal, direction);
+		reflectDirection = direction - 2.0f * normal * dot(normal, direction);
 		return true;
 	}
 

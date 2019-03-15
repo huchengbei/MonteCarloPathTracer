@@ -64,14 +64,14 @@ bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec
 	{
 		if (kdTree->left != nullptr)
 			hit |= intersect(kdTree->left, ray, point, material, normal);
-		if (!hit && kdTree->right != nullptr)
+		if ( kdTree->right != nullptr)
 			hit |= intersect(kdTree->right, ray, point, material, normal);
 	}
 	else
 	{
 		if (kdTree->right != nullptr)
 			hit |= intersect(kdTree->right, ray, point, material, normal);
-		if (!hit && kdTree->left != nullptr)
+		if (kdTree->left != nullptr)
 			hit |= intersect(kdTree->left, ray, point, material, normal);
 	}
 
@@ -80,6 +80,14 @@ bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec
 
 bool intersect(Scene& scene, Ray& ray, Point3f& point, Material& material, Vec3f& normal)
 {
+	return intersect(scene.kdTree, ray, point, material, normal);
+}
+
+bool intersect(Scene& scene, Ray& ray)
+{
+	Point3f point;
+	Material material;
+	Vec3f normal;
 	return intersect(scene.kdTree, ray, point, material, normal);
 }
 
