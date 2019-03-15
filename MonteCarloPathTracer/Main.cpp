@@ -33,8 +33,8 @@ void render()
 
 void loadScene(string path)
 {
-	width = 100;
-	height = 100;
+	width = 200;
+	height = 200;
 	fov = 70;
 
 	scene = new Scene(width, height);

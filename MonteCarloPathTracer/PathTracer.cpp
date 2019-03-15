@@ -150,6 +150,8 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 			Color3f rgb;
 			for (int i = 0; i < light_sample_num; i++)
 			{
+				if (light.Le == Color3f(0.0f, 0.0f, 0.0f))
+					continue;
 				float randX = (float)rand() / RAND_MAX;
 				float randY = (float)rand() / RAND_MAX;
 
@@ -204,7 +206,7 @@ vector<float> PathTracer::render(Scene& scene)
 		return scene.colors;
 	}
 	auto t_start = std::chrono::high_resolution_clock::now();
-//#pragma omp parallel for schedule(dynamic, 1)
+#pragma omp parallel for schedule(dynamic, 1)
 	for (int y = 0; y < scene.height; ++y)
 	{
 		for (int x = 0; x < scene.width; ++x)

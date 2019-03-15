@@ -99,14 +99,6 @@ public:
 			left = leftVec.size() > 0 ? new KDTree(leftVec) : nullptr;
 			right = rightVec.size() > 0 ? new KDTree(rightVec) : nullptr;
 
-			/*
-			if (left == nullptr)
-				box = right->box;
-			else if (right == nullptr)
-				box = left->box;
-			else
-				box = Box::merge(left->box, right->box);
-			*/
 		}
 	}
 
