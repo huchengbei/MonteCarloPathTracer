@@ -14,7 +14,7 @@ class Scene
 public:
 	int width, height;
 	Color3f ambient;
-	Camera camera;
+	Camera* camera;
 	Model* model;
 	KDTree* kdTree = new KDTree();
 	vector<float> colors;
@@ -45,7 +45,7 @@ public:
 		{
 			float randX = (float)rand() / RAND_MAX;
 			float randY = (float)rand() / RAND_MAX;
-			ray = camera.getRay((x + randX) / width, (y + randY) / height);
+			ray = camera->getRay((x + randX) / width, (y + randY) / height);
 		}
 
 		return rays;

@@ -44,10 +44,10 @@ void loadScene(string path)
 	Point3f center = (model->box.high + model->box.low) / 2;
 	float scale = length(model->box.high - model->box.low) / 2;
 	Point3f pos = Point3f(center.x, center.y, center.z + 1.5 * scale);
-	scene->camera = Camera(pos, center, Vec3f(0, 1, 0));
-	Camera &camera = scene->camera;
+	scene->camera = new Camera(pos, center, Vec3f(0, 1, 0));
+	Camera* &camera = scene->camera;
 
-	camera.setViewPort(fov, (float)height / (float)width);
+	camera->setViewPort(fov, (float)height / (float)width);
 
 	pos = Point3f(-1, 9.8, 1);
 	Vec3f dy = Vec3f(2, 0, 0);
