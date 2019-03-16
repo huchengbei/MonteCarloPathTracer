@@ -66,9 +66,9 @@ bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec
 		{
 		case JUDGE:
 			if (kdTree->right != nullptr)
-				hit |= intersect(kdTree->right, ray, point, material, normal);
+				hit |= intersect(kdTree->right, ray, point, material, normal, jOC);
 			if (!hit && kdTree->left != nullptr)
-				hit |= intersect(kdTree->left, ray, point, material, normal);
+				hit |= intersect(kdTree->left, ray, point, material, normal, jOC);
 			break;
 		case CAL:
 			if (kdTree->left != nullptr)
@@ -86,9 +86,9 @@ bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec
 		{
 		case JUDGE:
 			if (kdTree->left != nullptr)
-				hit |= intersect(kdTree->left, ray, point, material, normal);
+				hit |= intersect(kdTree->left, ray, point, material, normal, jOC);
 			if (!hit && !hit && kdTree->right != nullptr)
-				hit |= intersect(kdTree->right, ray, point, material, normal);
+				hit |= intersect(kdTree->right, ray, point, material, normal, jOC);
 			break;
 		case CAL:
 			if (kdTree->right != nullptr)
