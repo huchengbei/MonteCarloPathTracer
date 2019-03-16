@@ -3,7 +3,6 @@
 #include "omp.h"
 #include "iostream"
 #include "vector"
-#include "chrono"
 
 using namespace std;
 
@@ -151,7 +150,8 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 			for (int i = 0; i < light_sample_num; i++)
 			{
 				if (light.Le == Color3f(0.0f, 0.0f, 0.0f))
-					continue;
+					return Color3f(0, 0, 0);
+					// continue;
 				float randX = (float)rand() / RAND_MAX;
 				float randY = (float)rand() / RAND_MAX;
 
@@ -170,7 +170,7 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 					float consOut = max(dot(-lightDirection, light.normal), 0.0f);
 					float geoFactor = consIn * consOut / (lightLength * lightLength);
 
-					Vec3f intensity = geoFactor * light.area * light.Le / (float)light_sample_num;
+					const Vec3f &intensity = geoFactor * light.area * light.Le / (float)light_sample_num;
 
 					if (material.Kd != Vec3f(0, 0, 0))
 					{
@@ -204,7 +204,6 @@ vector<float> PathTracer::render(Scene& scene)
 	{
 		return scene.colors;
 	}
-	auto t_start = std::chrono::high_resolution_clock::now();
 #pragma omp parallel for schedule(dynamic, 2)
 	for (int y = 0; y < scene.height; ++y)
 	{

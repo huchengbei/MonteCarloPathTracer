@@ -3,6 +3,8 @@
 #include "string"
 #include "PathTracer.h"
 #include "Scene.cpp"
+#include "chrono"
+#include "iomanip"
 using namespace std;
 
 int width;
@@ -11,6 +13,7 @@ int MaxRenderCnt = 100;
 float fov;
 PathTracer pathTracer;
 Scene*  scene;
+double  time_sum;
 void initWindow();
 
 void render()
@@ -25,9 +28,16 @@ void render()
 
 	if (cnt <= MaxRenderCnt)
 	{
+		auto t_start = std::chrono::high_resolution_clock::now();
 		cout <<"start "  << cnt << " itera" << endl;
 		pathTracer.render((*scene));
 		cout <<"end "  << cnt++ << " itera" << endl;
+		auto t_end = std::chrono::high_resolution_clock::now();
+		double tloop = std::chrono::duration_cast<std::chrono::duration<double>>
+			(t_end - t_start).count();
+		time_sum += tloop;
+		cout << std::fixed << std::setprecision(4) << "Time: " << tloop << "s Sum: " <<
+			time_sum << "s" << endl;
 	}
 
 	glRasterPos2i(0, 0);
@@ -39,8 +49,8 @@ void render()
 void loadScene(string path)
 {
 	cout << "Load Scene..." << endl;
-	width = 100;
-	height = 100;
+	width = 800;
+	height =800;
 	fov = 70;
 
 	scene = new Scene(width, height);

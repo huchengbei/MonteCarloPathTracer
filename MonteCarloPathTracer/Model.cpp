@@ -228,7 +228,7 @@ bool Model::Load(string path)
 					
 					if (material.Le != Color3f(0, 0, 0))
 					{
-						// lights.push_back(Light(tri->point, tri->edge1, tri->edge2, material.Le));
+						//lights.push_back(Light(tri->point, tri->edge1, tri->edge2, material.Le));
 					}
 
 					vertex_ids[1] = vertex_ids[2];
