@@ -162,8 +162,8 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 				Ray lightRay = Ray(point, lightDirection);
 				lightRay.tmax = lightLength;
 
-				is_intersected = intersect(scene, ray);
-				if (is_intersected)
+				is_intersected = intersect(scene, lightRay, JudgeOrCal::JUDGE);
+				if (!is_intersected)
 				{
 					lightDirection = normalize(lightDirection);
 					float consIn = max(dot(normal, lightDirection), 0.0f);

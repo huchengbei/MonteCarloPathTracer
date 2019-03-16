@@ -50,7 +50,7 @@ bool intersect(Triangle *trangle, Ray& ray, Point3f& point, Material& material, 
 	return false;
 }
 
-bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec3f& normal)
+bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec3f& normal, JudgeOrCal jOC)
 {
 	if (!intersect(kdTree->box, ray))
 		return false;
@@ -62,17 +62,43 @@ bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec
 
 	if (ray.direction.num[kdTree->splitAxis] >= 0)
 	{
-		if (kdTree->left != nullptr)
-			hit |= intersect(kdTree->left, ray, point, material, normal);
-		if ( kdTree->right != nullptr)
-			hit |= intersect(kdTree->right, ray, point, material, normal);
+		switch (jOC)
+		{
+		case JUDGE:
+			if (kdTree->right != nullptr)
+				hit |= intersect(kdTree->right, ray, point, material, normal);
+			if (!hit && kdTree->left != nullptr)
+				hit |= intersect(kdTree->left, ray, point, material, normal);
+			break;
+		case CAL:
+			if (kdTree->left != nullptr)
+				hit |= intersect(kdTree->left, ray, point, material, normal);
+			if (kdTree->right != nullptr)
+				hit |= intersect(kdTree->right, ray, point, material, normal);
+			break;
+		default:
+			break;
+		}
 	}
 	else
 	{
-		if (kdTree->right != nullptr)
-			hit |= intersect(kdTree->right, ray, point, material, normal);
-		if (kdTree->left != nullptr)
-			hit |= intersect(kdTree->left, ray, point, material, normal);
+		switch (jOC)
+		{
+		case JUDGE:
+			if (kdTree->left != nullptr)
+				hit |= intersect(kdTree->left, ray, point, material, normal);
+			if (!hit && !hit && kdTree->right != nullptr)
+				hit |= intersect(kdTree->right, ray, point, material, normal);
+			break;
+		case CAL:
+			if (kdTree->right != nullptr)
+				hit |= intersect(kdTree->right, ray, point, material, normal);
+			if (kdTree->left != nullptr)
+				hit |= intersect(kdTree->left, ray, point, material, normal);
+			break;
+		default:
+			break;
+		}
 	}
 
 	return hit;
@@ -83,11 +109,11 @@ bool intersect(Scene& scene, Ray& ray, Point3f& point, Material& material, Vec3f
 	return intersect(scene.kdTree, ray, point, material, normal);
 }
 
-bool intersect(Scene& scene, Ray& ray)
+bool intersect(Scene& scene, Ray& ray, JudgeOrCal jOC)
 {
 	Point3f point;
 	Material material;
 	Vec3f normal;
-	return intersect(scene.kdTree, ray, point, material, normal);
+	return intersect(scene.kdTree, ray, point, material, normal, jOC);
 }
 
