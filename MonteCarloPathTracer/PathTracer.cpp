@@ -203,7 +203,7 @@ vector<float> PathTracer::render(Model& model)
 	{
 		return model.colors;
 	}
-#pragma omp parallel for schedule(dynamic, 2)
+//#pragma omp parallel for schedule(dynamic, 2)
 	for (int y = 0; y < model.height; ++y)
 	{
 		for (int x = 0; x < model.width; ++x)

@@ -1,4 +1,6 @@
-#include "GL/freeglut.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include "iostream"
 #include "string"
 #include "PathTracer.h"
@@ -16,7 +18,7 @@ PathTracer pathTracer;
 Model*  model;
 double  time_sum;
 void initWindow();
-
+/*
 void render()
 {
 	static int cnt = 1;
@@ -47,11 +49,13 @@ void render()
 	glFlush();
 }
 
+*/
+
 void loadScene(string path)
 {
 	cout << "Load Scene..." << endl;
-	width = 400;
-	height =400;
+	width = 200;
+	height =200;
 	fov = 70;
 
 	cout << "Load Model..." << endl;
@@ -83,15 +87,83 @@ void loadScene(string path)
 	cout << "Init Model And buildTree...finished" << endl;
 	initWindow();
 }
+
+/*
 void update()
 {
 	glutPostRedisplay();
+}
+*/
+
+vector<float> getColor()
+{
+	static int cnt = 1;
+	auto t_start = std::chrono::high_resolution_clock::now();
+	cout << "start " << cnt << " itera" << endl;
+	auto colors = pathTracer.render(*model);
+	cout << "end " << cnt++ << " itera" << endl;
+	auto t_end = std::chrono::high_resolution_clock::now();
+	double tloop = std::chrono::duration_cast<std::chrono::duration<double>>
+		(t_end - t_start).count();
+	time_sum += tloop;
+	cout << std::fixed << std::setprecision(4) << "Time: " << tloop << "s Sum: " <<
+		time_sum << "s" << endl;
+	return colors;
+}
+
+void render()
+{
+	static int cnt = 1;
+	auto t_start = std::chrono::high_resolution_clock::now();
+	cout << "start " << cnt << " itera" << endl;
+	auto colors = pathTracer.render(*model);
+	cout << "end " << cnt++ << " itera" << endl;
+	auto t_end = std::chrono::high_resolution_clock::now();
+	double tloop = std::chrono::duration_cast<std::chrono::duration<double>>
+		(t_end - t_start).count();
+	time_sum += tloop;
+	cout << std::fixed << std::setprecision(4) << "Time: " << tloop << "s Sum: " <<
+		time_sum << "s" << endl;
+	// vector<float> colors = getColor();
+	cv::Mat image(width, height, CV_8UC3);
+	// for (size_t y = height-1; y >= 0 ; y--)
+	for (size_t y = 0; y < height ; y++)
+	{
+		for (size_t x = 0; x < width; x++)
+		{
+			int i = y;
+			int j = x;
+			int index = (y * width + x) * 3;
+			image.at<cv::Vec3b>(height - y - 1, width - x - 1)[0] = (int)colors[index] * 255;
+			image.at<cv::Vec3b>(height - y - 1, width - x - 1)[1] = (int)colors[index + 1] * 255;
+			image.at<cv::Vec3b>(height - y - 1, width - x - 1)[2] = (int)colors[index + 2] * 255;
+			// image.at<cv::Vec3b>(y, x)[0] = 255;
+			// image.at<cv::Vec3b>(y, x)[1] = 0;
+			// image.at<cv::Vec3b>(y, x)[2] = 0;
+			// if ((j - width/ 2)*(j - width/2) + (i - height/2)*(i - height/2) <= 100 * 100)
+			// {
+			// 	image.at<cv::Vec3b>(i, j)[0] = i;
+			// 	image.at<cv::Vec3b>(i, j)[1] = j;
+			// 	image.at<cv::Vec3b>(i, j)[2] = (i + j) / 2;
+			// }
+		}
+	}
+	cv::imshow("1", image);
+	cv::waitKey(0);
+
 }
 
 void initWindow()
 {
 	pathTracer = PathTracer();
 	cout << "width:" << width << ",height:" << height << endl;
+	while (true)
+	{
+		render();
+	}
+	
+	
+	/*
 	int argc = 1;
 	char** argv= NULL;
 	glutInit(&argc, argv);
@@ -102,6 +174,7 @@ void initWindow()
 	glutDisplayFunc(render);
 	glutIdleFunc(update);
 	glutMainLoop();
+	*/
 }
 
 

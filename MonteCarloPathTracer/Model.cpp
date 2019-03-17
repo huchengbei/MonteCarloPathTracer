@@ -24,7 +24,7 @@ void Model::init()
 {
 	colors.clear();
 	colors.resize(3 * width * height);
-	ambient = Color3f(0.2, 0.2, 0.2);
+	ambient = Color3f(0.2f, 0.2f, 0.2f);
 	kdTree->buildTree(triangles);
 }
 
@@ -40,7 +40,6 @@ bool Model::LoadMaterial(string path)
 	bool flag = false;
 	string materialName;
 	Material material;
-	int illum;
 
 	string type;
 
