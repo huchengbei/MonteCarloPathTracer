@@ -42,19 +42,19 @@ Vec3f PathTracer::BREFImportanceSample(Vec3f &direction, float Ns, REFLECT_TYPE 
 	return normalize(sample.x * right + sample.y * direction + sample.z * front);
 }
 
-Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material &material, Vec3f &normal)
+Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material* &material, Vec3f &normal)
 {
 	Vec3f direction;
 
 	float k1, k2;
-	k1 = dot(material.Kd, Vec3f(1, 1, 1));
-	k2 = dot(material.Ks, Vec3f(1, 1, 1)) + k1;
+	k1 = dot(material->Kd, Vec3f(1, 1, 1));
+	k2 = dot(material->Ks, Vec3f(1, 1, 1)) + k1;
 
 	if (k2 <= 0)
 		return Ray(point, direction);
 
 	// refraction
-	if (material.Ni != 1.0)
+	if (material->Ni != 1.0)
 	{
 		float ni, nt;
 		float cosTheta = dot(ray.direction, normal);
@@ -62,14 +62,14 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material &material, V
 		Vec3f tNormal;
 		if (cosTheta > 0.0)
 		{
-			ni = material.Ni;
+			ni = material->Ni;
 			nt = 1.0f;
 			tNormal = -normal;
 		}
 		else
 		{
 			ni = 1.0f;
-			nt = material.Ni;
+			nt = material->Ni;
 			tNormal = normal;
 		}
 
@@ -92,12 +92,12 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material &material, V
 	{
 		Vec3f reflect;
 		ray.reflect(normal, reflect);
-		direction = BREFImportanceSample(reflect, material.Ns, REFLECT_TYPE::SPECULAR_REFLECT);
+		direction = BREFImportanceSample(reflect, material->Ns, REFLECT_TYPE::SPECULAR_REFLECT);
 		return Ray(point, direction, Ray::SOURCE::SPECULAR_REFLECT);
 	}
 	else
 	{
-		direction = BREFImportanceSample(normal, material.Ns, REFLECT_TYPE::DIFFUSE_REFLECT);
+		direction = BREFImportanceSample(normal, material->Ns, REFLECT_TYPE::DIFFUSE_REFLECT);
 		return Ray(point, direction, Ray::SOURCE::DIFFUSE_REFLECT);
 	}
 }
@@ -105,7 +105,7 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material &material, V
 Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 {
 	Point3f point;
-	Material material;
+	Material* material;
 	Vec3f normal;
 	Color3f color, ambientIllumination, indirectIllumination, directIllumination;
 
@@ -117,8 +117,8 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 	else
 	{
 		if (depth > max_path_depth)
-			return material.Le;
-		ambientIllumination = material.Ka * scene.ambient;
+			return material->Le;
+		ambientIllumination = material->Ka * scene.ambient;
 
 		Ray nextRay = monteCarloSample(ray, point, material, normal);
 		if (nextRay.source != Ray::SOURCE::NONE)
@@ -128,10 +128,10 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 			switch (nextRay.source)
 			{
 			case Ray::SOURCE::DIFFUSE_REFLECT:
-				indirectIllumination *= material.Kd;
+				indirectIllumination *= material->Kd;
 				break;
 			case Ray::SOURCE::SPECULAR_REFLECT:
-				indirectIllumination *= material.Ks;
+				indirectIllumination *= material->Ks;
 				break;
 			case Ray::SOURCE::TRANSMISSION:
 				indirectIllumination *= 1;// material.Tf;
@@ -172,20 +172,20 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 
 					const Vec3f &intensity = geoFactor * light.area * light.Le / (float)light_sample_num;
 
-					if (material.Kd != Vec3f(0, 0, 0))
+					if (material->Kd != Vec3f(0, 0, 0))
 					{
 						float cosInOut = dot(lightDirection, normal);
 						if (cosInOut > 0.0)
-							rgb += cosInOut * material.Kd * intensity / PI;
+							rgb += cosInOut * material->Kd * intensity / PI;
 					}
 
-					if (material.Ks != Vec3f(0, 0, 0))
+					if (material->Ks != Vec3f(0, 0, 0))
 					{
 						Vec3f v = ray.direction.flip();
 						Vec3f h = normalize(lightDirection + v);
 						float mDotH = dot(h, normal);
 						if (mDotH > 0.0)
-							rgb += pow(mDotH, material.Ns) * material.Ks * intensity * (material.Ns + 1) / (2 * PI);
+							rgb += pow(mDotH, material->Ns) * material->Ks * intensity * (material->Ns + 1) / (2 * PI);
 					}
 				}
 			}
@@ -193,7 +193,7 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 		}
 	}
 
-	color = material.Le + ambientIllumination + indirectIllumination + directIllumination;
+	color = material->Le + ambientIllumination + indirectIllumination + directIllumination;
 	return color;
 }
 

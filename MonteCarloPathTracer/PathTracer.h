@@ -17,7 +17,7 @@ public:
 
 	Vec3f BREFImportanceSample(Vec3f &direction, float Ns, REFLECT_TYPE type);
 
-	Ray monteCarloSample(Ray &ray, Point3f &point, Material &material, Vec3f &normal);
+	Ray monteCarloSample(Ray &ray, Point3f &point, Material* &material, Vec3f &normal);
 
 	Color3f trace(Scene &scene, Ray &ray, int depth = 0);
 

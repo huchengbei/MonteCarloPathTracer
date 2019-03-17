@@ -18,6 +18,7 @@ public:
 	vector<Vec3f> vertexs;
 	vector<Vec3f> normals;	
 	vector<Light> lights;
+	map<string, Material> materialTable;
 
 	Box box;
 	vector<Triangle*> triangles;
@@ -25,7 +26,7 @@ public:
 	Model() {}
 	Model(string path);
 
-	bool LoadMaterial(string path, map<string, Material> &materialTable);
+	bool LoadMaterial(string path);
 
 	bool Load(string path);
 };
@@ -40,7 +41,7 @@ public:
 	Vec3f edge1, edge2;
 
 	Model* model;
-	Material material;
+	Material* material;
 	Box box;
 
 	Vec3f normal;

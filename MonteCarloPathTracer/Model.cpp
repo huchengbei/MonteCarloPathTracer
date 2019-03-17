@@ -62,7 +62,7 @@ Model::Model(string path)
 	}
 }
 
-bool Model::LoadMaterial(string path, map<string, Material> &materialTable)
+bool Model::LoadMaterial(string path)
 {
 	ifstream file(path);
 	if (!file.is_open())
@@ -129,13 +129,13 @@ bool Model::Load(string path)
 	}
 
 	bool returnValue = true;
-	map<string, Material> materialTable;
+	// map<string, Material> materialTable;
 
 	string type;
 	Point3f v;
 	Vec3f vn;
 	string materialName;
-	Material material;
+	Material* material = nullptr;
 	int vertex_ids[3];
 	int vertex_normal_ids[3];
 
@@ -147,7 +147,7 @@ bool Model::Load(string path)
 			file >> mtlFileName;
 			int pos = (int)(path.find_last_of('/'));
 			string mtlPath = path.substr(0, pos + 1) + mtlFileName;
-			if (!LoadMaterial(mtlPath, materialTable))
+			if (!LoadMaterial(mtlPath))
 			{
 				returnValue = false;
 				cerr << "load mtl file error. file path: " << path << endl;
@@ -160,7 +160,7 @@ bool Model::Load(string path)
 			map<string, Material>::const_iterator it = materialTable.find(materialName);
 			if (it != materialTable.end())
 			{
-				material = it->second;
+				material = (Material*)(&(it->second));
 			}
 			else
 			{
@@ -226,7 +226,7 @@ bool Model::Load(string path)
 					tri->material = material;
 					triangles.push_back(tri);
 					
-					if (material.Le != Color3f(0, 0, 0))
+					if (material->Le != Color3f(0, 0, 0))
 					{
 						//lights.push_back(Light(tri->point, tri->edge1, tri->edge2, material.Le));
 					}

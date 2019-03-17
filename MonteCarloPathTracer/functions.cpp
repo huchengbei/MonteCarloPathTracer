@@ -21,7 +21,7 @@ bool intersect(Box& box, Ray& ray)
 	return !(tmax < 0 || tmin > tmax || tmin >= ray.tmax || tmax <= ray.tmin);
 }
 
-bool intersect(Triangle *trangle, Ray& ray, Point3f& point, Material& material, Vec3f& normal)
+bool intersect(Triangle *trangle, Ray& ray, Point3f& point, Material* &material, Vec3f& normal)
 {
 	if (abs(dot(trangle->normal, ray.direction)) < EPS)
 		return false;
@@ -50,7 +50,7 @@ bool intersect(Triangle *trangle, Ray& ray, Point3f& point, Material& material, 
 	return false;
 }
 
-bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec3f& normal, JudgeOrCal jOC)
+bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material* &material, Vec3f& normal, JudgeOrCal jOC)
 {
 	if (!intersect(kdTree->box, ray))
 		return false;
@@ -104,7 +104,7 @@ bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material& material, Vec
 	return hit;
 }
 
-bool intersect(Scene& scene, Ray& ray, Point3f& point, Material& material, Vec3f& normal)
+bool intersect(Scene& scene, Ray& ray, Point3f& point, Material* &material, Vec3f& normal)
 {
 	return intersect(scene.kdTree, ray, point, material, normal);
 }
@@ -112,7 +112,7 @@ bool intersect(Scene& scene, Ray& ray, Point3f& point, Material& material, Vec3f
 bool intersect(Scene& scene, Ray& ray, JudgeOrCal jOC)
 {
 	Point3f point;
-	Material material;
+	Material* material;
 	Vec3f normal;
 	return intersect(scene.kdTree, ray, point, material, normal, jOC);
 }
