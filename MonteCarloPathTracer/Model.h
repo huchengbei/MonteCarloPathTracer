@@ -21,18 +21,13 @@ public:
 	int width, height;
 	Color3f ambient;
 	Camera* camera;
-	Model* model;
 	KDTree* kdTree;
 	vector<float> colors;
 
 	vector<Vec3f> vertexs;
 	vector<Vec3f> normals;	
+
 	vector<Light>* lights;
-
-	void init();
-		
-	vector<Ray> getRays(int x, int y, int px_sample_num);
-
 	map<string, Material> materialTable;
 
 	Box box;
@@ -41,9 +36,13 @@ public:
 	Model() {}
 	Model(string path);
 
+	void init();
+		
 	bool LoadMaterial(string path);
 
 	bool Load(string path);
+
+	vector<Ray> getRays(int x, int y, int px_sample_num);
 };
 
 class Triangle

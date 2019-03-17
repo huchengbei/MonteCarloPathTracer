@@ -146,12 +146,11 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 	{
 		for (Light &light : *model.lights)
 		{
+			if (light.Le == Color3f(0.0f, 0.0f, 0.0f))
+				continue;
 			Color3f rgb;
 			for (int i = 0; i < light_sample_num; i++)
 			{
-				if (light.Le == Color3f(0.0f, 0.0f, 0.0f))
-					return Color3f(0, 0, 0);
-					// continue;
 				float randX = (float)rand() / RAND_MAX;
 				float randY = (float)rand() / RAND_MAX;
 
@@ -207,8 +206,6 @@ vector<float> PathTracer::render(Model& model)
 #pragma omp parallel for schedule(dynamic, 2)
 	for (int y = 0; y < model.height; ++y)
 	{
-		// if(y %10 == 0)
-		//	cout << "line: " << y << endl;
 		for (int x = 0; x < model.width; ++x)
 		{
 			Color3f pxColor;

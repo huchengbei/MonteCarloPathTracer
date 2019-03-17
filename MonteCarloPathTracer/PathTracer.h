@@ -1,6 +1,5 @@
 #pragma once
 #include "Model.h"
-// #include "Scene.cpp"
 #include "Ray.cpp"
 #include "Material.cpp"
 #include "functions.h"

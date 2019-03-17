@@ -1,13 +1,11 @@
 #pragma once
-#pragma once
 #include "iostream"
 #include "string"
 #include "vector"
 #include "Model.h"
-
 using namespace std;
-class Triangle;
 
+class Triangle;
 enum AXIS { X, Y, Z };
 class KDTree
 {

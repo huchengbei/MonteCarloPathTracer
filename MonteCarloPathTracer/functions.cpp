@@ -14,7 +14,6 @@ bool intersect(Box& box, Ray& ray)
 	float t5 = (box.low.z - ray.position.z) * invDirection.z;
 	float t6 = (box.high.z - ray.position.z) * invDirection.z;
 
-	// distance of front and back intersection
 	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
 	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
 

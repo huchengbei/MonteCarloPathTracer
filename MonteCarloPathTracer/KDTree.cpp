@@ -13,7 +13,6 @@ KDTree::KDTree(vector<Triangle *> &triangles)
 void KDTree::buildTree(vector<Triangle *> &triangles)
 {
 	int size = (int)(triangles.size());
-
 	splitAxis = getSplitAxis(triangles);
 
 	if (size == 1)

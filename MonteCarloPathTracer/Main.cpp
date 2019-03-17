@@ -2,7 +2,8 @@
 #include "iostream"
 #include "string"
 #include "PathTracer.h"
-#include "Scene.cpp"
+#include "Model.h"
+#include "Camera.cpp"
 #include "chrono"
 #include "iomanip"
 using namespace std;
@@ -53,34 +54,33 @@ void loadScene(string path)
 	height =400;
 	fov = 70;
 
+	cout << "Load Model..." << endl;
 	model = new Model(path);
+	cout << "Load Model...finished" << endl;
 	model->width = width;
 	model->height = height;
-	cout << "Load Model..." << endl;
-	// scene->model = new Model(path);
-	cout << "Load Model...finished" << endl;
-	//Model* &model = scene->model;
 
 	Point3f center = (model->box.high + model->box.low) / 2;
 	float scale = length(model->box.high - model->box.low) / 2;
 	Point3f pos = Point3f(center.x, center.y, center.z + 1.5 * scale);
+
 	model->camera = new Camera(pos, center, Vec3f(0, 1, 0));
 	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
+	vector<Light> lights;
 	pos = Point3f(-1, 9.8, 1);
 	Vec3f dy = Vec3f(2, 0, 0);
 	Vec3f dx = Vec3f(0, 0, -2);
 	Color3f emission = Color3f(50, 50, 50);
 
-	vector<Light> lights;
 	lights.push_back(Light(pos, dx, dy, emission));
 	lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
 	model->lights = &lights;
 
-	cout << "Init Scene & buildTree..." << endl;
+	cout << "Init Model And buildTree..." << endl;
 	model->init();
-	cout << "Init Scene & buildTree...finished" << endl;
+	cout << "Init Model And buildTree...finished" << endl;
 	initWindow();
 }
 void update()

@@ -1,12 +1,11 @@
 #pragma once
 #include "MetaClass.h"
-#include "Scene.cpp"
 #include "Ray.cpp"
 #include "Model.h"
 #include "KDTree.h"
 #include "Material.cpp"
 
-// JudgeOrCalIntersection
+// Judge Or Cal Intersection
 enum JudgeOrCal{JUDGE, CAL};
 
 bool intersect(Box& box, Ray& ray);
