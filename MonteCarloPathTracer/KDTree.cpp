@@ -2,121 +2,103 @@
 #include "iostream"
 #include "string"
 #include "vector"
+#include "KDTree.h"
 #include "Model.h"
 
-using namespace std;
-
-class KDTree
+KDTree::KDTree(vector<Triangle *> &triangles)
 {
-public:
-	enum AXIS{X, Y, Z};
+	buildTree(triangles);
+}
 
-	Box box;
-	AXIS splitAxis;
-	KDTree* left;
-	KDTree* right;
+void KDTree::buildTree(vector<Triangle *> &triangles)
+{
+	int size = (int)(triangles.size());
 
-	Triangle* node;
-	bool isLeaf = false;
+	splitAxis = getSplitAxis(triangles);
 
-	KDTree(){}
-
-	KDTree(vector<Triangle *> &triangles)
+	if (size == 1)
 	{
-		buildTree(triangles);
+		isLeaf = true;
+		node = triangles[0];
+		left = nullptr;
+		right = nullptr;
 	}
-
-	void buildTree(vector<Triangle *> &triangles)
+	else
 	{
-		int size = (int)(triangles.size());
+		vector<Triangle *> leftVec;
+		vector<Triangle *> rightVec;
 
-		splitAxis = getSplitAxis(triangles);
-		
-		if (size == 1)
+		float minVal = FLT_MAX;
+		float maxVal = -FLT_MAX;
+
+		minVal = box.getMinCoord(splitAxis);
+		maxVal = box.getMaxCoord(splitAxis);
+		float pivot = (maxVal + minVal) / 2;
+
+		Box bbox;
+		for (int i = 0; i < triangles.size(); i++)
 		{
-			isLeaf = true;
-			node = triangles[0];
-			left = nullptr;
-			right = nullptr;
+			bbox = triangles[i]->getBox();
+			float center = (bbox.getMaxCoord(splitAxis) + bbox.getMinCoord(splitAxis)) / 2;
+			if (center < pivot)
+				leftVec.push_back(triangles[i]);
+			else
+				rightVec.push_back(triangles[i]);
 		}
-		else
+
+		int index;
+		if (leftVec.size() == triangles.size())
 		{
-			vector<Triangle *> leftVec;
-			vector<Triangle *> rightVec;
-
-			float minVal = FLT_MAX;
-			float maxVal = -FLT_MAX;
-
-			minVal = box.getMinCoord(splitAxis);
-			maxVal = box.getMaxCoord(splitAxis);
-			float pivot = (maxVal + minVal) / 2;
-
-			Box bbox;
-			for (int i = 0; i < triangles.size(); i++)
+			float maxCenter = -FLT_MAX;
+			for (int i = 0; i < leftVec.size(); i++)
 			{
-				bbox = triangles[i]->getBox();
+				bbox = leftVec[i]->getBox();
 				float center = (bbox.getMaxCoord(splitAxis) + bbox.getMinCoord(splitAxis)) / 2;
-				if (center < pivot)
-					leftVec.push_back(triangles[i]);
-				else
-					rightVec.push_back(triangles[i]);
-			}
-
-			int index;
-			if (leftVec.size() == triangles.size())
-			{
-				float maxCenter = -FLT_MAX;
-				for (int i = 0; i < leftVec.size(); i++)
+				if (center > maxCenter)
 				{
-					bbox = leftVec[i]->getBox();
-					float center = (bbox.getMaxCoord(splitAxis) + bbox.getMinCoord(splitAxis)) / 2;
-					if (center > maxCenter)
-					{
-						maxCenter = center;
-						index = i;
-					}
+					maxCenter = center;
+					index = i;
 				}
-				rightVec.push_back(leftVec[index]);
-				leftVec.erase(leftVec.begin() + index);
 			}
-			else if (rightVec.size() == triangles.size())
-			{
-				float minCenter = FLT_MAX;
-				for (int i = 0; i < rightVec.size(); i++)
-				{
-					bbox = rightVec[i]->getBox();
-					float center = (bbox.getMaxCoord(splitAxis) + bbox.getMinCoord(splitAxis)) / 2;
-					if (center < minCenter)
-					{
-						minCenter = center;
-						index = i;
-					}
-				}
-				leftVec.push_back(rightVec[index]);
-				rightVec.erase(rightVec.begin() + index);
-			}
-
-			left = leftVec.size() > 0 ? new KDTree(leftVec) : nullptr;
-			right = rightVec.size() > 0 ? new KDTree(rightVec) : nullptr;
-
+			rightVec.push_back(leftVec[index]);
+			leftVec.erase(leftVec.begin() + index);
 		}
-	}
-
-	//cal box of this level & get split axis
-	AXIS getSplitAxis(vector<Triangle*> &triangles)
-	{
-		for (Triangle* &tri : triangles)
+		else if (rightVec.size() == triangles.size())
 		{
-			box = Box::merge(box, tri->getBox());
+			float minCenter = FLT_MAX;
+			for (int i = 0; i < rightVec.size(); i++)
+			{
+				bbox = rightVec[i]->getBox();
+				float center = (bbox.getMaxCoord(splitAxis) + bbox.getMinCoord(splitAxis)) / 2;
+				if (center < minCenter)
+				{
+					minCenter = center;
+					index = i;
+				}
+			}
+			leftVec.push_back(rightVec[index]);
+			rightVec.erase(rightVec.begin() + index);
 		}
 
-		Vec3f diff = box.high - box.low;
-		if (diff.x > diff.y && diff.x > diff.z)
-			return X;
-		else if (diff.y > diff.x && diff.y > diff.z)
-			return Y;
-		else
-			return Z;
+		left = leftVec.size() > 0 ? new KDTree(leftVec) : nullptr;
+		right = rightVec.size() > 0 ? new KDTree(rightVec) : nullptr;
+
+	}
+}
+
+//cal box of this level & get split axis
+AXIS KDTree::getSplitAxis(vector<Triangle*> &triangles)
+{
+	for (Triangle* &tri : triangles)
+	{
+		box = Box::merge(box, tri->getBox());
 	}
 
-};
+	Vec3f diff = box.high - box.low;
+	if (diff.x > diff.y && diff.x > diff.z)
+		return X;
+	else if (diff.y > diff.x && diff.y > diff.z)
+		return Y;
+	else
+		return Z;
+}

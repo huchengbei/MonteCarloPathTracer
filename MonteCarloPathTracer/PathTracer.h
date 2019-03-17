@@ -1,5 +1,6 @@
 #pragma once
-#include "Scene.cpp"
+#include "Model.h"
+// #include "Scene.cpp"
 #include "Ray.cpp"
 #include "Material.cpp"
 #include "functions.h"
@@ -19,9 +20,9 @@ public:
 
 	Ray monteCarloSample(Ray &ray, Point3f &point, Material* &material, Vec3f &normal);
 
-	Color3f trace(Scene &scene, Ray &ray, int depth = 0);
+	Color3f trace(Model &model, Ray &ray, int depth = 0);
 
-	vector<float> render(Scene& scene);
+	vector<float> render(Model& model);
 
 	vector<float> getColors(int w, int h);
 

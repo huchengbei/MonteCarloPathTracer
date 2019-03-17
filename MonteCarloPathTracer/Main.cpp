@@ -12,7 +12,7 @@ int height;
 int MaxRenderCnt = 100;
 float fov;
 PathTracer pathTracer;
-Scene*  scene;
+Model*  model;
 double  time_sum;
 void initWindow();
 
@@ -30,7 +30,7 @@ void render()
 	{
 		auto t_start = std::chrono::high_resolution_clock::now();
 		cout <<"start "  << cnt << " itera" << endl;
-		pathTracer.render((*scene));
+		pathTracer.render(*model);
 		cout <<"end "  << cnt++ << " itera" << endl;
 		auto t_end = std::chrono::high_resolution_clock::now();
 		double tloop = std::chrono::duration_cast<std::chrono::duration<double>>
@@ -41,7 +41,7 @@ void render()
 	}
 
 	glRasterPos2i(0, 0);
-	glDrawPixels(width, height, GL_RGB, GL_FLOAT, (GLvoid *)scene->colors.data());
+	glDrawPixels(width, height, GL_RGB, GL_FLOAT, (GLvoid *)model->colors.data());
 
 	glFlush();
 }
@@ -49,32 +49,37 @@ void render()
 void loadScene(string path)
 {
 	cout << "Load Scene..." << endl;
-	width = 800;
-	height =800;
+	width = 400;
+	height =400;
 	fov = 70;
 
-	scene = new Scene(width, height);
+	model = new Model(path);
+	model->width = width;
+	model->height = height;
 	cout << "Load Model..." << endl;
-	scene->model = new Model(path);
+	// scene->model = new Model(path);
 	cout << "Load Model...finished" << endl;
-	Model* &model = scene->model;
+	//Model* &model = scene->model;
 
 	Point3f center = (model->box.high + model->box.low) / 2;
 	float scale = length(model->box.high - model->box.low) / 2;
 	Point3f pos = Point3f(center.x, center.y, center.z + 1.5 * scale);
-	scene->camera = new Camera(pos, center, Vec3f(0, 1, 0));
-	Camera* &camera = scene->camera;
+	model->camera = new Camera(pos, center, Vec3f(0, 1, 0));
+	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
 	pos = Point3f(-1, 9.8, 1);
 	Vec3f dy = Vec3f(2, 0, 0);
 	Vec3f dx = Vec3f(0, 0, -2);
 	Color3f emission = Color3f(50, 50, 50);
-	scene->model->lights.push_back(Light(pos, dx, dy, emission));
-	scene->model->lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
+
+	vector<Light> lights;
+	lights.push_back(Light(pos, dx, dy, emission));
+	lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
+	model->lights = &lights;
 
 	cout << "Init Scene & buildTree..." << endl;
-	scene->init();
+	model->init();
 	cout << "Init Scene & buildTree...finished" << endl;
 	initWindow();
 }

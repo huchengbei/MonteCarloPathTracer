@@ -130,11 +130,11 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="PathTracer.cpp" />
     <ClCompile Include="Ray.cpp" />
-    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Box.h" />
     <ClInclude Include="functions.h" />
+    <ClInclude Include="KDTree.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PathTracer.h" />
   </ItemGroup>

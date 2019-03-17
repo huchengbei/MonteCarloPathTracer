@@ -102,14 +102,14 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material* &material, 
 	}
 }
 
-Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
+Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 {
 	Point3f point;
 	Material* material;
 	Vec3f normal;
 	Color3f color, ambientIllumination, indirectIllumination, directIllumination;
 
-	bool is_intersected = intersect(scene, ray, point, material, normal);
+	bool is_intersected = intersect(model, ray, point, material, normal);
 	if (!is_intersected)
 	{
 		return Color3f(0, 0, 0);
@@ -118,12 +118,12 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 	{
 		if (depth > max_path_depth)
 			return material->Le;
-		ambientIllumination = material->Ka * scene.ambient;
+		ambientIllumination = material->Ka * model.ambient;
 
 		Ray nextRay = monteCarloSample(ray, point, material, normal);
 		if (nextRay.source != Ray::SOURCE::NONE)
 		{
-			indirectIllumination = trace(scene, nextRay, depth + 1);
+			indirectIllumination = trace(model, nextRay, depth + 1);
 
 			switch (nextRay.source)
 			{
@@ -142,9 +142,9 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 		}
 	}
 
-	if (!scene.model->lights.empty())
+	if (!(*model.lights).empty())
 	{
-		for (Light &light : scene.model->lights)
+		for (Light &light : *model.lights)
 		{
 			Color3f rgb;
 			for (int i = 0; i < light_sample_num; i++)
@@ -162,7 +162,7 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 				Ray lightRay = Ray(point, lightDirection);
 				lightRay.tmax = lightLength;
 
-				is_intersected = intersect(scene, lightRay, JudgeOrCal::JUDGE);
+				is_intersected = intersect(model, lightRay, JudgeOrCal::JUDGE);
 				if (!is_intersected)
 				{
 					lightDirection = normalize(lightDirection);
@@ -197,39 +197,39 @@ Color3f PathTracer::trace(Scene &scene, Ray &ray, int depth)
 	return color;
 }
 
-vector<float> PathTracer::render(Scene& scene)
+vector<float> PathTracer::render(Model& model)
 {
 	++iter_cnt;
 	if (iter_cnt > maxRenderDepth)
 	{
-		return scene.colors;
+		return model.colors;
 	}
 #pragma omp parallel for schedule(dynamic, 2)
-	for (int y = 0; y < scene.height; ++y)
+	for (int y = 0; y < model.height; ++y)
 	{
 		// if(y %10 == 0)
 		//	cout << "line: " << y << endl;
-		for (int x = 0; x < scene.width; ++x)
+		for (int x = 0; x < model.width; ++x)
 		{
 			Color3f pxColor;
-			vector<Ray> rays = scene.getRays(x, y, px_sample_num);
+			vector<Ray> rays = model.getRays(x, y, px_sample_num);
 			for (Ray &ray : rays)
 			{
-				Color3f sampleColor = trace(scene, ray).slip();;
+				Color3f sampleColor = trace(model, ray).slip();;
 				pxColor += sampleColor;
 			}
 			pxColor /= (float)px_sample_num;
 
-			int index = (y * scene.width + x) * 3;
-			scene.colors[index] = (scene.colors[index] * (iter_cnt - 1) + pxColor.r) / iter_cnt;
-			scene.colors[index + 1] = (scene.colors[index + 1] * (iter_cnt - 1) + pxColor.g) / iter_cnt;
-			scene.colors[index + 2] = (scene.colors[index + 2] * (iter_cnt - 1) + pxColor.b) / iter_cnt;
+			int index = (y * model.width + x) * 3;
+			model.colors[index] = (model.colors[index] * (iter_cnt - 1) + pxColor.r) / iter_cnt;
+			model.colors[index + 1] = (model.colors[index + 1] * (iter_cnt - 1) + pxColor.g) / iter_cnt;
+			model.colors[index + 2] = (model.colors[index + 2] * (iter_cnt - 1) + pxColor.b) / iter_cnt;
 		}
 	}
 
-	return scene.colors;
+	return model.colors;
 
-	vector<float> colors = getColors(scene.width, scene.height);
+	vector<float> colors = getColors(model.width, model.height);
 	return colors;
 }
 

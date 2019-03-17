@@ -1,5 +1,6 @@
 #pragma once
 #include "Model.h"
+#include "Camera.cpp"
 #include "iostream"
 #include "fstream"
 
@@ -51,6 +52,7 @@ Vec3f Triangle::getIntersectioNormal(Vec3f &point)
 
 Model::Model(string path)
 {
+	kdTree = new KDTree();
 	if (Load(path))
 	{
 		cout << "Load " << path << "successful" << endl << endl;
@@ -240,4 +242,26 @@ bool Model::Load(string path)
 	}
 	file.close();
 	return returnValue;
+}
+void Model::init()
+{
+	colors.clear();
+	colors.resize(3 * width * height);
+	ambient = Color3f(0.2, 0.2, 0.2);
+	kdTree->buildTree(triangles);
+}
+
+vector<Ray> Model::getRays(int x, int y, int px_sample_num)
+{
+	vector<Ray> rays;
+	rays.resize(px_sample_num);
+
+	for (Ray &ray : rays)
+	{
+		float randX = (float)rand() / RAND_MAX;
+		float randY = (float)rand() / RAND_MAX;
+		ray = camera->getRay((x + randX) / width, (y + randY) / height);
+	}
+
+	return rays;
 }

@@ -2,22 +2,37 @@
 #include "vector"
 #include "string"
 #include "map"
-
 #include "Box.h"
+#include "Ray.cpp"
 #include "Light.cpp"
 #include "Material.cpp"
 #include "MetaClass.h"
+#include "KDTree.h"
 
 using namespace std;
 
 class Triangle;
+class Camera;
+class KDTree;
 
 class Model
 {
 public:
+	int width, height;
+	Color3f ambient;
+	Camera* camera;
+	Model* model;
+	KDTree* kdTree;
+	vector<float> colors;
+
 	vector<Vec3f> vertexs;
 	vector<Vec3f> normals;	
-	vector<Light> lights;
+	vector<Light>* lights;
+
+	void init();
+		
+	vector<Ray> getRays(int x, int y, int px_sample_num);
+
 	map<string, Material> materialTable;
 
 	Box box;

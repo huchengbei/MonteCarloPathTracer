@@ -104,16 +104,16 @@ bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material* &material, Ve
 	return hit;
 }
 
-bool intersect(Scene& scene, Ray& ray, Point3f& point, Material* &material, Vec3f& normal)
+bool intersect(Model& model, Ray& ray, Point3f& point, Material* &material, Vec3f& normal)
 {
-	return intersect(scene.kdTree, ray, point, material, normal);
+	return intersect(model.kdTree, ray, point, material, normal);
 }
 
-bool intersect(Scene& scene, Ray& ray, JudgeOrCal jOC)
+bool intersect(Model& model, Ray& ray, JudgeOrCal jOC)
 {
 	Point3f point;
 	Material* material;
 	Vec3f normal;
-	return intersect(scene.kdTree, ray, point, material, normal, jOC);
+	return intersect(model.kdTree, ray, point, material, normal, jOC);
 }
 
