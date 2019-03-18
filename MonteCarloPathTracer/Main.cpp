@@ -2,6 +2,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "iostream"
+#include <experimental/filesystem>
 #include "string"
 #include "PathTracer.h"
 #include "Model.h"
@@ -12,29 +13,39 @@
 using namespace std;
 
 Log logs;
+cv::Mat image;
 int width;
 int height;
+bool saveImage = true; // saveImage
+double  time_sum;
 string path;
+string windowName; // saveImage
+string resultDir;
+
 int MaxRenderCnt = 100;
 float fov;
 PathTracer pathTracer;
 Model*  model;
-double  time_sum;
 
-void initWindow();
+void loadImage();
 void loadScene(string path);
-void render();
-void redisplay();
+void render(cv::Mat &image);
 
 int main(int argc, char *argv[])
 {
-	width = 400;
-	height =400;
+	windowName = "Monte Carlo Path Tracer";
+	cv::namedWindow(windowName);
+	width = 200;
+	height =200;
+	saveImage = true;
+	MaxRenderCnt = 100;
+	image = cv::Mat(width, height, CV_8UC3);
 	path = "../models/scene01.obj";
 	loadScene(path);
 	system("pause");
 	return 0;
 }
+
 
 void loadScene(string path)
 {
@@ -67,48 +78,61 @@ void loadScene(string path)
 	logs.out("Init Model And buildTree...");
 	model->init();
 	logs.out("Init Model And buildTree...finished");
-	initWindow();
+	loadImage();
 }
 
-/*
-void update()
-{
-	glutPostRedisplay();
-}
-*/
-
-vector<float> getColor()
+void loadImage()
 {
 	static int cnt = 1;
-	auto t_start = std::chrono::high_resolution_clock::now();
-	cout << "start " << cnt << " itera" << endl;
-	auto colors = pathTracer.render(*model);
-	cout << "end " << cnt++ << " itera" << endl;
-	auto t_end = std::chrono::high_resolution_clock::now();
-	double tloop = std::chrono::duration_cast<std::chrono::duration<double>>
-		(t_end - t_start).count();
-	time_sum += tloop;
-	cout << std::fixed << std::setprecision(4) << "Time: " << tloop << "s Sum: " <<
-		time_sum << "s" << endl;
-	return colors;
+	pathTracer = PathTracer();
+	pathTracer.pxSampleNum = 1;
+	pathTracer.lightSampleNum = 3;
+	pathTracer.maxPathDepth = 3;
+	pathTracer.maxRenderDepth = MaxRenderCnt;
+
+	logs.out("width: " + to_string(width) + ", height: " + to_string(height));
+	while (true)
+	{
+		chrono::time_point<chrono::steady_clock> t_start = std::chrono::high_resolution_clock::now();
+		logs.out("start " + to_string(cnt) + " iterate");
+
+		render(image);
+		
+		logs.out("end " + to_string(cnt++) + " iterate");
+		chrono::time_point<chrono::steady_clock> t_end = chrono::high_resolution_clock::now();
+		double time = chrono::duration_cast<chrono::duration<float>>
+			(t_end - t_start).count();
+		time_sum += time;
+		char content[50];
+		sprintf_s(content, "Time: %.2fs Total: %.2fs Avg: %.2fs", time, time_sum, time_sum / (float)(cnt - 1));
+		logs.out(content);
+
+		if (saveImage && (cnt - 1) % 5 == 0)
+		{
+			if (!std::experimental::filesystem::exists(resultDir)) {
+				int pos = (int)(path.find_last_of('/'));
+				resultDir = path.substr(0, pos + 1) + "results/";
+				logs.out("Can't find result directory. It will be create in the obj's directory and named result");
+				std::experimental::filesystem::create_directories(resultDir);
+			}
+			char imageName[10];
+			sprintf_s(imageName, "%03d.jpg", cnt - 1);
+			string fileName = resultDir + imageName;
+			cv::imwrite(fileName, image);
+			logs.out("Save image " + string(imageName) + " in the directory: " + resultDir);
+		}
+
+		cv::imshow(windowName, image);
+		cv::waitKey(1);
+	}
 }
 
-cv::Mat render()
+void render(cv::Mat &image)
 {
-	static int cnt = 1;
-	auto t_start = std::chrono::high_resolution_clock::now();
-	cout << "start " << cnt << " itera" << endl;
-	auto colors = pathTracer.render(*model);
-	cout << "end " << cnt++ << " itera" << endl;
-	auto t_end = std::chrono::high_resolution_clock::now();
-	double tloop = std::chrono::duration_cast<std::chrono::duration<double>>
-		(t_end - t_start).count();
-	time_sum += tloop;
-	cout << std::fixed << std::setprecision(4) << "Time: " << tloop << "s Sum: " <<
-		time_sum << "s" << endl;
-	// vector<float> colors = getColor();
-	cv::Mat image(width, height, CV_8UC3);
-	// for (size_t y = height-1; y >= 0 ; y--)
+	vector<float> colors = pathTracer.render(*model);
+
+	// it can be remove
+	image.resize(width, height);
 	for (size_t y = 0; y < height ; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -125,86 +149,9 @@ cv::Mat render()
 			g = g < 0.0f ? 0.0f : g;
 			b = b > 1.0f ? 1.0f : b;
 			b = b < 0.0f ? 0.0f : b;
-			image.at<cv::Vec3b>(height - y - 1, x)[0] = (int)(r * 255);
+			image.at<cv::Vec3b>(height - y - 1, x)[0] = (int)(b * 255);
 			image.at<cv::Vec3b>(height - y - 1, x)[1] = (int)(g * 255);
-			image.at<cv::Vec3b>(height - y - 1, x)[2] = (int)(b * 255);
-			// image.at<cv::Vec3b>(y, x)[0] = 255;
-			// image.at<cv::Vec3b>(y, x)[1] = 0;
-			// image.at<cv::Vec3b>(y, x)[2] = 0;
-			// if ((j - width/ 2)*(j - width/2) + (i - height/2)*(i - height/2) <= 100 * 100)
-			// {
-			// 	image.at<cv::Vec3b>(i, j)[0] = i;
-			// 	image.at<cv::Vec3b>(i, j)[1] = j;
-			// 	image.at<cv::Vec3b>(i, j)[2] = (i + j) / 2;
-			// }
+			image.at<cv::Vec3b>(height - y - 1, x)[2] = (int)(r * 255);
 		}
 	}
-	return image;
-}
-
-void initWindow()
-{
-	pathTracer = PathTracer();
-	pathTracer.pxSampleNum = 1;
-	pathTracer.lightSampleNum = 3;
-	pathTracer.maxPathDepth = 5;
-	pathTracer.maxRenderDepth = 100;
-
-	logs.out("width: " + to_string(width) + ", height: " + to_string(height));
-	while (true)
-	{
-		cv::Mat image = render();
-		cv::imshow("1", image);
-		cv::waitKey(1);
-	}
-	
-	
-	/*
-	int argc = 1;
-	char** argv= NULL;
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(width, height);
-	glutInitWindowPosition(200, 200);
-	glutCreateWindow("Monte Carlo Path Tracer");
-	glutDisplayFunc(render);
-	glutIdleFunc(redisplay);
-	glutMainLoop();
-	*/
-}
-
-void render()
-{
-	static int cnt = 1;
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0, width, 0, height);
-
-	if (cnt <= MaxRenderCnt)
-	{
-		chrono::time_point<chrono::steady_clock> t_start = std::chrono::high_resolution_clock::now();
-		logs.out("start " + to_string(cnt) + " iterate");
-		pathTracer.render(*model);
-		logs.out("end " + to_string(cnt++) + " iterate");
-		chrono::time_point<chrono::steady_clock> t_end = chrono::high_resolution_clock::now();
-		double time = chrono::duration_cast<chrono::duration<float>>
-			(t_end - t_start).count();
-		time_sum += time;
-		char content[50];
-		sprintf_s(content, "Time: %.2fs Total: %.2fs Avg: %.2fs", time, time_sum, time_sum / (float)(cnt - 1));
-		logs.out(content);
-	}
-
-	glRasterPos2i(0, 0);
-	glDrawPixels(width, height, GL_RGB, GL_FLOAT, (GLvoid *)model->colors.data());
-
-	glFlush();
-}
-
-void redisplay()
-{
-	glutPostRedisplay();
 }
