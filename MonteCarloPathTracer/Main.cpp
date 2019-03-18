@@ -4,10 +4,12 @@
 #include "PathTracer.h"
 #include "Model.h"
 #include "Camera.cpp"
+#include "Log.cpp"
 #include "chrono"
 #include "iomanip"
 using namespace std;
 
+Log logs;
 int width;
 int height;
 string path;
@@ -35,10 +37,9 @@ int main(int argc, char *argv[])
 void loadScene(string path)
 {
 	fov = 70;
-
-	cout << "Load Model..." << endl;
+	logs.out("Load Model...");
 	model = new Model(path);
-	cout << "Load Model...finished" << endl;
+	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
 	model->ambient = Color3f(0.2f, 0.2f, 0.2f);
@@ -61,9 +62,9 @@ void loadScene(string path)
 	lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
 	model->lights = &lights;
 
-	cout << "Init Model And buildTree..." << endl;
+	logs.out("Init Model And buildTree...");
 	model->init();
-	cout << "Init Model And buildTree...finished" << endl;
+	logs.out("Init Model And buildTree...finished");
 	initWindow();
 }
 
@@ -75,7 +76,7 @@ void initWindow()
 	pathTracer.maxPathDepth = 5;
 	pathTracer.maxRenderDepth = 100;
 
-	cout << "width:" << width << ",height:" << height << endl;
+	logs.out("width: " + to_string(width) + ", height: " + to_string(height));
 	int argc = 1;
 	char** argv= NULL;
 	glutInit(&argc, argv);
@@ -100,15 +101,17 @@ void render()
 
 	if (cnt <= MaxRenderCnt)
 	{
-		auto t_start = std::chrono::high_resolution_clock::now();
-		cout <<"start "  << cnt << " itera" << endl;
+		chrono::time_point<chrono::steady_clock> t_start = std::chrono::high_resolution_clock::now();
+		logs.out("start " + to_string(cnt) + " iterate");
 		pathTracer.render(*model);
-		cout <<"end "  << cnt++ << " itera" << endl;
-		auto t_end = chrono::high_resolution_clock::now();
+		logs.out("end " + to_string(cnt++) + " iterate");
+		chrono::time_point<chrono::steady_clock> t_end = chrono::high_resolution_clock::now();
 		double time = chrono::duration_cast<chrono::duration<float>>
 			(t_end - t_start).count();
 		time_sum += time;
-		cout << fixed << setprecision(2) << "Time: " << time << "s Sum: " << time_sum << "s" << endl;
+		char content[50];
+		sprintf_s(content, "Time: %.2fs Total: %.2fs Avg: %.2fs", time, time_sum, time_sum / (float)(cnt - 1));
+		logs.out(content);
 	}
 
 	glRasterPos2i(0, 0);
