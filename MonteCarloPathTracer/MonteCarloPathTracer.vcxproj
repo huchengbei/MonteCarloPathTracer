@@ -123,6 +123,7 @@
     <ClCompile Include="functions.cpp" />
     <ClCompile Include="KDTree.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MetaClass.h" />

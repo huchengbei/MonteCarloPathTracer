@@ -10,9 +10,9 @@ public:
 	enum REFLECT_TYPE{SPECULAR_REFLECT, DIFFUSE_REFLECT};
 
 	int iter_cnt = 0;
-	int px_sample_num = 1;
-	int light_sample_num = 3;
-	int max_path_depth = 5;
+	int pxSampleNum = 1;
+	int lightSampleNum = 3;
+	int maxPathDepth = 5;
 	int maxRenderDepth = 100;
 
 	Vec3f BREFImportanceSample(Vec3f &direction, float Ns, REFLECT_TYPE type);

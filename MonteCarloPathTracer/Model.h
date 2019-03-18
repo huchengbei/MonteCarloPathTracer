@@ -23,6 +23,7 @@ public:
 	Camera* camera;
 	KDTree* kdTree;
 	vector<float> colors;
+	int faceNum = 0;
 
 	vector<Vec3f> vertexs;
 	vector<Vec3f> normals;	

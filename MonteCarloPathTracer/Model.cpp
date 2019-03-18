@@ -11,12 +11,12 @@ Model::Model(string path)
 	kdTree = new KDTree();
 	if (Load(path))
 	{
-		cout << "Load " << path << "successful" << endl << endl;
-		cout << "Triangles: " << triangles.size() << endl;
+		cout << "\tLoad " << path << " successful" << endl;
+		cout << "\tFaces: " << faceNum << "  Triangles: " << triangles.size() << endl;
 	}
 	else
 	{
-		cout << "Load " << path << "error." << endl;
+		cout << "\tLoad " << path << "error." << endl;
 	}
 }
 
@@ -24,7 +24,6 @@ void Model::init()
 {
 	colors.clear();
 	colors.resize(3 * width * height);
-	ambient = Color3f(0.2f, 0.2f, 0.2f);
 	kdTree->buildTree(triangles);
 }
 
@@ -33,13 +32,14 @@ bool Model::LoadMaterial(string path)
 	ifstream file(path);
 	if (!file.is_open())
 	{
-		cerr << "open mtl file error. file path: " << path << endl;
+		cerr << "\topen mtl file error. file path: " << path << endl;
 		return false;
 	}
 
 	bool flag = false;
 	string materialName;
 	Material material;
+	int illum;
 
 	string type;
 
@@ -89,7 +89,7 @@ bool Model::Load(string path)
 	ifstream file(path);
 	if (!file.is_open())
 	{
-		cerr << "open obj file error. file path: " << path << endl;
+		cerr << "\topen obj file error. file path: " << path << endl;
 		return false;
 	}
 
@@ -114,7 +114,7 @@ bool Model::Load(string path)
 			if (!LoadMaterial(mtlPath))
 			{
 				returnValue = false;
-				cerr << "load mtl file error. file path: " << path << endl;
+				cerr << "\tload mtl file error. file path: " << path << endl;
 				break;
 			}
 		}
@@ -129,7 +129,7 @@ bool Model::Load(string path)
 			else
 			{
 				returnValue = false;
-				cerr << "mtl name: " << materialName << "not find in mtl file" << endl;
+				cerr << "\tmtl name: " << materialName << "not find in mtl file" << endl;
 				break;
 			}
 		}
@@ -146,6 +146,7 @@ bool Model::Load(string path)
 		}
 		else if (type == "f")
 		{
+			faceNum++;
 			int index = 0;
 			while (true)
 			{
