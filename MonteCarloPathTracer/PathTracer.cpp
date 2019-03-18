@@ -116,7 +116,7 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 	}
 	else
 	{
-		if (depth > max_path_depth)
+		if (depth > maxPathDepth)
 			return material->Le;
 		ambientIllumination = material->Ka * model.ambient;
 
@@ -149,7 +149,7 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 			if (light.Le == Color3f(0.0f, 0.0f, 0.0f))
 				continue;
 			Color3f rgb;
-			for (int i = 0; i < light_sample_num; i++)
+			for (int i = 0; i < lightSampleNum; i++)
 			{
 				float randX = (float)rand() / RAND_MAX;
 				float randY = (float)rand() / RAND_MAX;
@@ -169,7 +169,7 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 					float consOut = max(dot(-lightDirection, light.normal), 0.0f);
 					float geoFactor = consIn * consOut / (lightLength * lightLength);
 
-					const Vec3f &intensity = geoFactor * light.area * light.Le / (float)light_sample_num;
+					const Vec3f &intensity = geoFactor * light.area * light.Le / (float)lightSampleNum;
 
 					if (material->Kd != Vec3f(0, 0, 0))
 					{
@@ -209,13 +209,13 @@ vector<float> PathTracer::render(Model& model)
 		for (int x = 0; x < model.width; ++x)
 		{
 			Color3f pxColor;
-			vector<Ray> rays = model.getRays(x, y, px_sample_num);
+			vector<Ray> rays = model.getRays(x, y, pxSampleNum);
 			for (Ray &ray : rays)
 			{
-				Color3f sampleColor = trace(model, ray).slip();;
+				Color3f sampleColor = trace(model, ray).slip();
 				pxColor += sampleColor;
 			}
-			pxColor /= (float)px_sample_num;
+			pxColor /= (float)pxSampleNum;
 
 			int index = (y * model.width + x) * 3;
 			model.colors[index] = (model.colors[index] * (iter_cnt - 1) + pxColor.r) / iter_cnt;

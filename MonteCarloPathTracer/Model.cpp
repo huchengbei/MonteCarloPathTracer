@@ -24,7 +24,6 @@ void Model::init()
 {
 	colors.clear();
 	colors.resize(3 * width * height);
-	ambient = Color3f(0.2, 0.2, 0.2);
 	kdTree->buildTree(triangles);
 }
 
