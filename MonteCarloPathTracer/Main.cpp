@@ -111,7 +111,7 @@ vector<float> getColor()
 	return colors;
 }
 
-void render()
+cv::Mat render()
 {
 	static int cnt = 1;
 	auto t_start = std::chrono::high_resolution_clock::now();
@@ -148,9 +148,7 @@ void render()
 			// }
 		}
 	}
-	cv::imshow("1", image);
-	cv::waitKey(0);
-
+	return image;
 }
 
 void initWindow()
@@ -159,7 +157,9 @@ void initWindow()
 	cout << "width:" << width << ",height:" << height << endl;
 	while (true)
 	{
-		render();
+		cv::Mat image = render();
+		cv::imshow("1", image);
+		cv::waitKey(1);
 	}
 	
 	
