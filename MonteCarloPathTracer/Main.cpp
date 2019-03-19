@@ -28,28 +28,15 @@ PathTracer pathTracer;
 Model*  model;
 
 void loadImage();
-void loadScene(string path);
 void render(cv::Mat &image);
 
-int main(int argc, char *argv[])
+// classical model
+void loadScene0()
 {
-	windowName = "Monte Carlo Path Tracer";
-	cv::namedWindow(windowName);
-	saveImage = true;
-	MaxRenderCnt = 100;
 	path = "../models/scene01.obj";
-	loadScene(path);
-	system("pause");
-	return 0;
-}
-
-
-void loadScene(string path)
-{
 	width = 200;
-	height =200;
-	fov = 70;
-	image = cv::Mat(width, height, CV_8UC3);
+	height = 200;
+	image = cv::Mat(height, width, CV_8UC3);
 	logs.out("Load Model...");
 	bool enableInternalLight = false;
 	model = new Model(path, enableInternalLight);
@@ -61,16 +48,152 @@ void loadScene(string path)
 	vector<Light>* lights = model->lights;
 	Point3f lightCenter = Point3f(0, 9.8, 0);
 	float radius = 1.0f;
+	float area = 4.0f;
 	Color3f emission = Color3f(50, 50, 50);
 	Vec3f normal = Vec3f(0, -1, 0);
 	// add external light
-	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, 4, normal));
+	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, area, normal));
 
 	Point3f center = (model->box.high + model->box.low) / 2;
 	float scale = length(model->box.high - model->box.low) / 2;
 	Point3f pos = Point3f(center.x, center.y, center.z + 1.5 * scale);
+	Vec3f up = Vec3f(0, 1, 0);
+	fov = 70;
 
-	model->camera = new Camera(pos, center, Vec3f(0, 1, 0));
+	model->camera = new Camera(pos, center, up);
+	Camera* &camera = model->camera;
+	camera->setViewPort(fov, (float)height / (float)width);
+
+	logs.out("Init Model And buildTree...");
+	model->init();
+	logs.out("Init Model And buildTree...finished");
+	loadImage();
+}
+
+// cup model
+void loadScene1()
+{
+	path = "../models/Scene01/cup.obj";
+	width = 512;
+	height = 512;
+	image = cv::Mat(height, width, CV_8UC3);
+	logs.out("Load Model...");
+	bool enableInternalLight = false;
+	model = new Model(path, enableInternalLight);
+	logs.out("Load Model...finished");
+	model->width = width;
+	model->height = height;
+	model->ambient = Color3f(0.2f, 0.2f, 0.2f);
+
+	vector<Light>* lights = model->lights;
+	Point3f lightCenter = Point3f(-2.758771896, 1.5246, 0);
+	float radius = 0.5f;
+	float area = 1.0f;
+	Color3f emission = Color3f(40, 40, 40);
+	Vec3f normal = Vec3f(1, 0, 0);
+	// add external light
+	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, area, normal));
+
+	Point3f center = Color3f(0.0, 0.40, 0.3);
+	Point3f pos = Point3f(0.0, 0.64, 0.52);
+	Vec3f up = Vec3f(0, 1, 0);
+	fov = 60;
+
+	model->camera = new Camera(pos, center, up);
+	Camera* &camera = model->camera;
+	camera->setViewPort(fov, (float)height / (float)width);
+
+	logs.out("Init Model And buildTree...");
+	model->init();
+	logs.out("Init Model And buildTree...finished");
+	loadImage();
+}
+
+// room model
+void loadScene2()
+{
+	path = "../models/Scene02/room.obj";
+	width = 512;
+	height = 512;
+	image = cv::Mat(height, width, CV_8UC3);
+	logs.out("Load Model...");
+	bool enableInternalLight = false;
+	model = new Model(path, enableInternalLight);
+	logs.out("Load Model...finished");
+	model->width = width;
+	model->height = height;
+	model->ambient = Color3f(0.2f, 0.2f, 0.2f);
+
+	vector<Light>* lights = model->lights;
+	Point3f lightCenter = Point3f(0.0, 1.589, -1.274);
+	float radius = 0.2f;
+	Color3f emission = Color3f(50, 50, 40);
+	// add external light
+	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
+
+	Point3f center = Color3f(0.0, 0.0, 0.0);
+	Point3f pos = Point3f(0.0, 0.0, 0.4);
+	Vec3f up = Vec3f(0, 1, 0);
+	fov = 50;
+
+	model->camera = new Camera(pos, center, up);
+	Camera* &camera = model->camera;
+	camera->setViewPort(fov, (float)height / (float)width);
+
+	logs.out("Init Model And buildTree...");
+	model->init();
+	logs.out("Init Model And buildTree...finished");
+	loadImage();
+}
+
+// Veach MIS model
+void loadScene3()
+{
+	path = "../models/Scene03/VeachMIS.obj";
+	width = 288;
+	height = 216;
+	image = cv::Mat(height, width, CV_8UC3);
+	logs.out("Load Model...");
+	bool enableInternalLight = false;
+	model = new Model(path, enableInternalLight);
+	logs.out("Load Model...finished");
+	model->width = width;
+	model->height = height;
+	model->ambient = Color3f(0.2f, 0.2f, 0.2f);
+
+	vector<Light>* lights = model->lights;
+	Point3f lightCenter = Point3f(-10, 10, 4);
+	float radius = 0.5f;
+	Color3f emission = Color3f(800, 800, 800);
+	// add external light
+	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
+
+	lightCenter = Point3f(3.75, 0, 0);
+	radius = 0.033f;
+	emission = Color3f(901.803, 901.803, 901.803);
+	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
+
+	lightCenter = Point3f(1.25, 0, 0);
+	radius = 0.1f;
+	emission = Color3f(100, 100, 100);
+	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
+
+	lightCenter = Point3f(-1.25, 0, 0);
+	radius = 0.3f;
+	emission = Color3f(11.1111, 11.1111, 11.1111);
+	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
+
+	lightCenter = Point3f(-3.75, 0, 0);
+	radius = 0.9f;
+	emission = Color3f(1.23457, 1.23457, 1.23457);
+	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
+
+	Point3f center = Color3f(0.0, 1.69521, 14.0476);
+	Point3f pos = Point3f(0.0, 2.0, 15.0);
+	Vec3f up = Vec3f(0.0, 0.952421, -0.304787);
+	fov = 38;
+
+	model->camera = new Camera(pos, center, up);
 	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
@@ -79,6 +202,21 @@ void loadScene(string path)
 	model->init();
 	logs.out("Init Model And buildTree...finished");
 	loadImage();
+}
+
+
+int main(int argc, char *argv[])
+{
+	windowName = "Monte Carlo Path Tracer";
+	cv::namedWindow(windowName);
+	saveImage = true;
+	MaxRenderCnt = 100;
+	// loadScene0();
+	// loadScene1();
+	// loadScene2();
+	loadScene3();
+	system("pause");
+	return 0;
 }
 
 void loadImage()
@@ -91,7 +229,10 @@ void loadImage()
 	pathTracer.maxRenderDepth = MaxRenderCnt;
 
 	logs.out("width: " + to_string(width) + ", height: " + to_string(height));
-	while (true)
+
+	int pos = (int)(path.find_last_of('/'));
+	resultDir = path.substr(0, pos + 1) + "results/";
+	while (cnt <= MaxRenderCnt)
 	{
 		chrono::time_point<chrono::steady_clock> t_start = std::chrono::high_resolution_clock::now();
 		logs.out("start " + to_string(cnt) + " iterate");
@@ -110,8 +251,6 @@ void loadImage()
 		if (saveImage && (cnt - 1) % 5 == 0)
 		{
 			if (!std::experimental::filesystem::exists(resultDir)) {
-				int pos = (int)(path.find_last_of('/'));
-				resultDir = path.substr(0, pos + 1) + "results/";
 				logs.out("Can't find result directory. It will be create in the obj's directory and named result");
 				std::experimental::filesystem::create_directories(resultDir);
 			}
@@ -132,7 +271,7 @@ void render(cv::Mat &image)
 	vector<float> colors = pathTracer.render(*model);
 
 	// it can be remove
-	image.resize(width, height);
+	image.resize(height, width);
 	for (size_t y = 0; y < height ; y++)
 	{
 		for (size_t x = 0; x < width; x++)
