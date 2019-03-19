@@ -39,7 +39,6 @@ bool Model::LoadMaterial(string path)
 	bool flag = false;
 	string materialName;
 	Material material;
-	int illum;
 
 	string type;
 

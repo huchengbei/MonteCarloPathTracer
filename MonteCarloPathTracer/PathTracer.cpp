@@ -134,7 +134,7 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 				indirectIllumination *= material->Ks;
 				break;
 			case Ray::SOURCE::TRANSMISSION:
-				indirectIllumination *= 1;// material.Tf;
+				indirectIllumination *= material->Tf;
 				break;
 			default:
 				break;
@@ -149,12 +149,10 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 			if (light.Le == Color3f(0.0f, 0.0f, 0.0f))
 				continue;
 			Color3f rgb;
+			auto pointts = light.getPoints(6);
 			for (int i = 0; i < lightSampleNum; i++)
 			{
-				float randX = (float)rand() / RAND_MAX;
-				float randY = (float)rand() / RAND_MAX;
-
-				Point3f lightPoint = light.position + randX * light.dx + randY * light.dy;
+				Point3f lightPoint = light.getRandomLightPoint();
 				Vec3f lightDirection = lightPoint - point;
 				float lightLength = length(lightDirection);
 

@@ -71,8 +71,9 @@ void loadScene(string path)
 	Vec3f dx = Vec3f(0, 0, -2);
 	Color3f emission = Color3f(50, 50, 50);
 
-	lights.push_back(Light(pos, dx, dy, emission));
-	lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
+	// lights.push_back(Light(pos, dx, dy, emission));
+	// lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
+	lights.push_back(Light(Light::TYPE::POLYGON, Point3f(0.0f, 9.8f, 0.0f), 1, emission * 1.75, 4, Vec3f(0, -1, 0)));
 	model->lights = &lights;
 
 	logs.out("Init Model And buildTree...");

@@ -40,6 +40,16 @@ public:
 		return *this;
 	}
 
+	inline Vec3f getOneVerticalVec()
+	{
+		if (z != 0)
+			return Vec3f(1, 1, -(x + y) / z);
+		if (y != 0)
+			return Vec3f(1, -(x + z) / y, 1);
+		if (x != 0)
+			return Vec3f(-(y + z) / x, 1, 1);
+	}
+
 	inline Vec3f& abs()
 	{
 		x = x > 0 ? x : -x;
