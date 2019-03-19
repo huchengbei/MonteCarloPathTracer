@@ -28,6 +28,7 @@ public:
 	vector<Vec3f> vertexs;
 	vector<Vec3f> normals;	
 
+	bool enableInternalLight = true;
 	vector<Light>* lights;
 	map<string, Material> materialTable;
 
@@ -35,7 +36,7 @@ public:
 	vector<Triangle*> triangles;
 
 	Model() {}
-	Model(string path);
+	Model(string path, bool isEnableInternalLight = true);
 
 	void init();
 		

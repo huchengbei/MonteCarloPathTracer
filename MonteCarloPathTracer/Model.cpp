@@ -6,9 +6,11 @@
 
 using namespace std;
 
-Model::Model(string path)
+Model::Model(string path, bool isEnableInternalLight)
 {
+	enableInternalLight = isEnableInternalLight;
 	kdTree = new KDTree();
+	lights = new vector<Light>;
 	if (Load(path))
 	{
 		cout << "\tLoad " << path << " successful" << endl;

@@ -149,7 +149,6 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 			if (light.Le == Color3f(0.0f, 0.0f, 0.0f))
 				continue;
 			Color3f rgb;
-			auto pointts = light.getPoints(6);
 			for (int i = 0; i < lightSampleNum; i++)
 			{
 				Point3f lightPoint = light.getRandomLightPoint();
@@ -164,7 +163,18 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 				{
 					lightDirection = normalize(lightDirection);
 					float consIn = max(dot(normal, lightDirection), 0.0f);
-					float consOut = max(dot(-lightDirection, light.normal), 0.0f);
+					float consOut;
+					switch (light.type)
+					{
+					case Light::TYPE::POLYGON:
+						consOut = max(dot(-lightDirection, light.normal), 0.0f);
+						break;
+					case Light::TYPE::SPHERE:
+						consOut = max(dot(-lightDirection, -lightDirection), 0.0f);
+						break;
+					default:
+						break;
+					}
 					float geoFactor = consIn * consOut / (lightLength * lightLength);
 
 					const Vec3f &intensity = geoFactor * light.area * light.Le / (float)lightSampleNum;

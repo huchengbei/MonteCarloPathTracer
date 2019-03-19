@@ -51,11 +51,18 @@ void loadScene(string path)
 {
 	fov = 70;
 	logs.out("Load Model...");
-	model = new Model(path);
+	model = new Model(path, false);
 	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
 	model->ambient = Color3f(0.2f, 0.2f, 0.2f);
+
+	vector<Light>* lights = model->lights;
+	Point3f lightCenter = Point3f(0, 9.8, 0);
+	float radius = 1.0f;
+	Color3f emission = Color3f(50, 50, 50);
+	Vec3f normal = Vec3f(0, -1, 0);
+	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 1.75, 4, normal));
 
 	Point3f center = (model->box.high + model->box.low) / 2;
 	float scale = length(model->box.high - model->box.low) / 2;
@@ -65,16 +72,6 @@ void loadScene(string path)
 	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
-	vector<Light> lights;
-	pos = Point3f(-1, 9.8, 1);
-	Vec3f dy = Vec3f(2, 0, 0);
-	Vec3f dx = Vec3f(0, 0, -2);
-	Color3f emission = Color3f(50, 50, 50);
-
-	// lights.push_back(Light(pos, dx, dy, emission));
-	// lights.push_back(Light(pos + dx + dy, -dx, -dy, emission));
-	lights.push_back(Light(Light::TYPE::POLYGON, Point3f(0.0f, 9.8f, 0.0f), 1, emission * 1.75, 4, Vec3f(0, -1, 0)));
-	model->lights = &lights;
 
 	logs.out("Init Model And buildTree...");
 	model->init();
