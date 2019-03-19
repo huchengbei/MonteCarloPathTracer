@@ -6,8 +6,11 @@ using namespace std;
 class Light
 {
 public:
-	enum TYPE{POLYGON, SPHERE};
-	Point3f center;
+	enum TYPE{POLYGON, SPHERE, TRIANGLE};
+	union{
+		Point3f center;
+		Point3f postion;
+	};
 	Vec3f normal;
 	float area;
 	float radius = 1;
@@ -16,10 +19,11 @@ public:
 
 	Vec3f dx{ 1, 0, 0 }, dy{0, 1, 0 }, dz{ 0, 0, 1 };
 
-	/* // old constructe method
+	// use by triangle
 	Light(Point3f pos, Vec3f dX, Vec3f dY, Vec3f emission)
 	{
-		center = pos;
+		type = TRIANGLE;
+		postion = pos;
 		Le = emission;
 		dx = dX;
 		dy = dY;
@@ -28,7 +32,6 @@ public:
 		area = length(normal);
 		normal = normalize(normal);
 	}
-	*/
 
 	Light(TYPE t, Point3f c, float r, Vec3f emission, float a = 0.0f, Vec3f n = Vec3f())
 	{
@@ -55,10 +58,17 @@ public:
 
 	Point3f getRandomLightPoint()
 	{
+		if (type == TYPE::TRIANGLE)
+		{
+			float randX = (float)rand() / RAND_MAX;
+			float randY = (float)rand() / RAND_MAX;
+			return postion + randX * dx + randY * dy;
+		}
+
 		float fixRadius = radius * 1.414f;
-		float randX = (((float)rand() / RAND_MAX) * 2 - 1) * fixRadius;
-		float randY = (((float)rand() / RAND_MAX) * 2 - 1) * fixRadius;
-		float randZ = (((float)rand() / RAND_MAX) * 2 - 1) * fixRadius;
-		return center + randX * dx + randY * dy+ randZ * dz;
+		float randX = (((float)rand() / RAND_MAX) * 2 - 1);
+		float randY = (((float)rand() / RAND_MAX) * 2 - 1);
+		float randZ = (((float)rand() / RAND_MAX) * 2 - 1);
+		return center + (randX * dx + randY * dy+ randZ * dz) * fixRadius;
 	}
 };

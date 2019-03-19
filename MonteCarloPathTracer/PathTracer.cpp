@@ -167,6 +167,7 @@ Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 					switch (light.type)
 					{
 					case Light::TYPE::POLYGON:
+					case Light::TYPE::TRIANGLE:
 						consOut = max(dot(-lightDirection, light.normal), 0.0f);
 						break;
 					case Light::TYPE::SPHERE:

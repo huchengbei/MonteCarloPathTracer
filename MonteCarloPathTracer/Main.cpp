@@ -35,11 +35,8 @@ int main(int argc, char *argv[])
 {
 	windowName = "Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
-	width = 200;
-	height =200;
 	saveImage = true;
 	MaxRenderCnt = 100;
-	image = cv::Mat(width, height, CV_8UC3);
 	path = "../models/scene01.obj";
 	loadScene(path);
 	system("pause");
@@ -49,9 +46,13 @@ int main(int argc, char *argv[])
 
 void loadScene(string path)
 {
+	width = 200;
+	height =200;
 	fov = 70;
+	image = cv::Mat(width, height, CV_8UC3);
 	logs.out("Load Model...");
-	model = new Model(path, false);
+	bool enableInternalLight = false;
+	model = new Model(path, enableInternalLight);
 	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
@@ -62,7 +63,8 @@ void loadScene(string path)
 	float radius = 1.0f;
 	Color3f emission = Color3f(50, 50, 50);
 	Vec3f normal = Vec3f(0, -1, 0);
-	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 1.75, 4, normal));
+	// add external light
+	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, 4, normal));
 
 	Point3f center = (model->box.high + model->box.low) / 2;
 	float scale = length(model->box.high - model->box.low) / 2;
