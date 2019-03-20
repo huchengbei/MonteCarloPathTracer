@@ -14,7 +14,7 @@ Model::Model(string path, bool isEnableInternalLight)
 	if (Load(path))
 	{
 		cout << "\tLoad " << path << " successful" << endl;
-		cout << "\tFaces: " << faceNum << "  Triangles: " << triangles.size() << endl;
+		cout << "\tFaces: " << facesNum << "  Triangles: " << trianglesNum << endl;
 	}
 	else
 	{
@@ -147,7 +147,7 @@ bool Model::Load(string path)
 		}
 		else if (type == "f")
 		{
-			faceNum++;
+			facesNum++;
 			int index = 0;
 			vertex_ids.clear();
 			vertex_normal_ids.clear();
@@ -191,27 +191,11 @@ bool Model::Load(string path)
 				else file.putback(split);
 
 				index++;
-				/*
-				if (index >= 3)
-				{
-					Triangle * tri = new Triangle(this, vertex_ids, vertex_normal_ids);
-					tri->material = material;
-					triangles.push_back(tri);
-
-					if (enableInternalLight && material->Le != Color3f(0, 0, 0))
-					{
-						lights->push_back(Light(tri->point, tri->edge1, tri->edge2, material->Le));
-					}
-
-					vertex_ids[1] = vertex_ids[2];
-					vertex_normal_ids[1] = vertex_normal_ids[2];
-					index = 2;
-				}
-				*/
 			}
 			// move to face
 			Face * face = new Face(this, vertex_ids, vertex_normal_ids, material);
 			faces.push_back(face);
+			trianglesNum += face->triangles.size();
 		}
 	}
 	file.close();
