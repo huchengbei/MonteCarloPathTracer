@@ -32,68 +32,8 @@ Model*  model;
 void loadImage();
 void render(cv::Mat &image);
 
-// classical model
-void loadScene0()
-{
-	windowName = "Classical - Monte Carlo Path Tracer";
-	cv::namedWindow(windowName);
-	saveImage = true;
-	savePreImage = 1;
-	log2file = true;
-	MaxRenderCnt = 1;
-
-	path = "../models/scene01.obj";
-	int pos = (int)(path.find_last_of('.'));
-	resultDir = path.substr(0, pos) + "_results/";
-
-	if (log2file)
-		logs.setPath(path.substr(0, pos) + ".log");
-
-	pathTracer = PathTracer();
-	pathTracer.pxSampleNum = 1;
-	pathTracer.lightSampleNum = 3;
-	pathTracer.maxPathDepth = 5;
-	pathTracer.maxRenderDepth = MaxRenderCnt;
-
-	width = 500;
-	height = 500;
-	image = cv::Mat(height, width, CV_8UC3);
-	logs.out("Load Model...");
-	bool enableInternalLight = false;
-	model = new Model(path, enableInternalLight);
-	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
-	logs.out("Load Model...finished");
-	model->width = width;
-	model->height = height;
-	model->ambient = Color3f(0.2f, 0.2f, 0.2f);
-
-	vector<Light>* lights = model->lights;
-	Point3f lightCenter = Point3f(0, 9.8, 0);
-	float radius = 1.0f;
-	float area = 4.0f;
-	Color3f emission = Color3f(50, 50, 50);
-	Vec3f normal = Vec3f(0, -1, 0);
-	// add external light
-	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, area, normal));
-
-	Point3f center = (model->box.high + model->box.low) / 2;
-	float scale = length(model->box.high - model->box.low) / 2;
-	Point3f position = Point3f(center.x, center.y, center.z + 1.5 * scale);
-	Vec3f up = Vec3f(0, 1, 0);
-	fov = 70;
-
-	model->camera = new Camera(position, center, up);
-	Camera* &camera = model->camera;
-	camera->setViewPort(fov, (float)height / (float)width);
-
-	logs.out("Init Model And buildTree...");
-	model->init();
-	logs.out("Init Model And buildTree...finished");
-	loadImage();
-}
-
 // cup model
-void loadScene1()
+void loadSceneCup()
 {
 	windowName = "Cup - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
@@ -152,7 +92,7 @@ void loadScene1()
 }
 
 // room model
-void loadScene2()
+void loadSceneRoom()
 {
 	windowName = "Room - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
@@ -209,7 +149,7 @@ void loadScene2()
 }
 
 // Veach MIS model
-void loadScene3()
+void loadSceneVeach()
 {
 	windowName = "Veach MIS - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
@@ -286,12 +226,72 @@ void loadScene3()
 	loadImage();
 }
 
+// classical model
+void loadScene0()
+{
+	windowName = "Classical - Monte Carlo Path Tracer";
+	cv::namedWindow(windowName);
+	saveImage = true;
+	savePreImage = 1;
+	log2file = true;
+	MaxRenderCnt = 100;
+
+	path = "../models/scene01.obj";
+	int pos = (int)(path.find_last_of('.'));
+	resultDir = path.substr(0, pos) + "_results/";
+
+	if (log2file)
+		logs.setPath(path.substr(0, pos) + ".log");
+
+	pathTracer = PathTracer();
+	pathTracer.pxSampleNum = 1;
+	pathTracer.lightSampleNum = 3;
+	pathTracer.maxPathDepth = 5;
+	pathTracer.maxRenderDepth = MaxRenderCnt;
+
+	width = 500;
+	height = 500;
+	image = cv::Mat(height, width, CV_8UC3);
+	logs.out("Load Model...");
+	bool enableInternalLight = false;
+	model = new Model(path, enableInternalLight);
+	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
+	logs.out("Load Model...finished");
+	model->width = width;
+	model->height = height;
+	model->ambient = Color3f(0.2f, 0.2f, 0.2f);
+
+	vector<Light>* lights = model->lights;
+	Point3f lightCenter = Point3f(0, 9.8, 0);
+	float radius = 1.0f;
+	float area = 4.0f;
+	Color3f emission = Color3f(50, 50, 50);
+	Vec3f normal = Vec3f(0, -1, 0);
+	// add external light
+	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, area, normal));
+
+	Point3f center = (model->box.high + model->box.low) / 2;
+	float scale = length(model->box.high - model->box.low) / 2;
+	Point3f position = Point3f(center.x, center.y, center.z + 1.5 * scale);
+	Vec3f up = Vec3f(0, 1, 0);
+	fov = 70;
+
+	model->camera = new Camera(position, center, up);
+	Camera* &camera = model->camera;
+	camera->setViewPort(fov, (float)height / (float)width);
+
+	logs.out("Init Model And buildTree...");
+	model->init();
+	logs.out("Init Model And buildTree...finished");
+	loadImage();
+}
+
 int main(int argc, char *argv[])
 {
+	// loadSceneCup();
+	// loadSceneRoom();
+	// loadSceneVeach();
 	loadScene0();
-	// loadScene1();
-	// loadScene2();
-	// loadScene3();
 	system("pause");
 	return 0;
 }
