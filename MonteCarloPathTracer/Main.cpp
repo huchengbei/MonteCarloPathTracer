@@ -40,7 +40,7 @@ void loadScene0()
 	saveImage = true;
 	savePreImage = 1;
 	log2file = true;
-	MaxRenderCnt = 100;
+	MaxRenderCnt = 1;
 
 	path = "../models/scene01.obj";
 	int pos = (int)(path.find_last_of('.'));
@@ -335,6 +335,8 @@ void loadImage()
 		cv::imshow(windowName, image);
 		cv::waitKey(1);
 	}
+	cv::imshow(windowName, image);
+	cv::waitKey(0);
 }
 
 void render(cv::Mat &image)
