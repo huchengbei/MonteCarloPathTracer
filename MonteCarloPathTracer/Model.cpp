@@ -14,7 +14,6 @@ Model::Model(string path, bool isEnableInternalLight)
 	if (Load(path))
 	{
 		cout << "\tLoad " << path << " successful" << endl;
-		cout << "\tFaces: " << facesNum << "  Triangles: " << trianglesNum << endl;
 	}
 	else
 	{
@@ -130,7 +129,7 @@ bool Model::Load(string path)
 			else
 			{
 				returnValue = false;
-				cerr << "\tmtl name: " << materialName << "not find in mtl file" << endl;
+				cerr << "\tmtl name: " << materialName << " not find in mtl file" << endl;
 				break;
 			}
 		}
