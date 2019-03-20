@@ -17,6 +17,7 @@ cv::Mat image;
 int width;
 int height;
 bool saveImage = true; // saveImage
+int savePreImage = 5;
 bool log2file = true;
 double  time_sum;
 string path;
@@ -37,6 +38,7 @@ void loadScene0()
 	windowName = "Classical - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	savePreImage = 1;
 	log2file = true;
 	MaxRenderCnt = 100;
 
@@ -96,6 +98,7 @@ void loadScene1()
 	windowName = "Cup - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	savePreImage = 1;
 	log2file = true;
 	MaxRenderCnt = 100;
 
@@ -154,6 +157,7 @@ void loadScene2()
 	windowName = "Room - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	savePreImage = 1;
 	log2file = true;
 	MaxRenderCnt = 100;
 
@@ -210,6 +214,7 @@ void loadScene3()
 	windowName = "Veach MIS - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	savePreImage = 1;
 	log2file = true;
 	MaxRenderCnt = 100;
 
@@ -313,7 +318,7 @@ void loadImage()
 		sprintf_s(content, "Time: %.2fs Total: %.2fs Avg: %.2fs", time, time_sum, time_sum / (float)cnt);
 		logs.out(content);
 
-		if (saveImage && cnt % 1 == 0)
+		if (saveImage && cnt % savePreImage == 0)
 		{
 			if (!std::experimental::filesystem::exists(resultDir)) {
 				logs.out("Can't find result directory. It will be create in the obj's directory and named result");
