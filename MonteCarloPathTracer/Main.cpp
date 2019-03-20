@@ -33,9 +33,20 @@ void render(cv::Mat &image);
 // classical model
 void loadScene0()
 {
+	windowName = "Classical - Monte Carlo Path Tracer";
+	cv::namedWindow(windowName);
+	saveImage = true;
+	MaxRenderCnt = 100;
+
+	pathTracer = PathTracer();
+	pathTracer.pxSampleNum = 1;
+	pathTracer.lightSampleNum = 3;
+	pathTracer.maxPathDepth = 5;
+	pathTracer.maxRenderDepth = MaxRenderCnt;
+
 	path = "../models/scene01.obj";
-	width = 200;
-	height = 200;
+	width = 500;
+	height = 500;
 	image = cv::Mat(height, width, CV_8UC3);
 	logs.out("Load Model...");
 	bool enableInternalLight = false;
@@ -73,6 +84,17 @@ void loadScene0()
 // cup model
 void loadScene1()
 {
+	windowName = "Cup - Monte Carlo Path Tracer";
+	cv::namedWindow(windowName);
+	saveImage = true;
+	MaxRenderCnt = 100;
+
+	pathTracer = PathTracer();
+	pathTracer.pxSampleNum = 1;
+	pathTracer.lightSampleNum = 3;
+	pathTracer.maxPathDepth = 5;
+	pathTracer.maxRenderDepth = MaxRenderCnt;
+
 	path = "../models/Scene01/cup.obj";
 	width = 512;
 	height = 512;
@@ -112,6 +134,17 @@ void loadScene1()
 // room model
 void loadScene2()
 {
+	windowName = "Room - Monte Carlo Path Tracer";
+	cv::namedWindow(windowName);
+	saveImage = true;
+	MaxRenderCnt = 100;
+
+	pathTracer = PathTracer();
+	pathTracer.pxSampleNum = 1;
+	pathTracer.lightSampleNum = 3;
+	pathTracer.maxPathDepth = 5;
+	pathTracer.maxRenderDepth = MaxRenderCnt;
+
 	path = "../models/Scene02/room.obj";
 	width = 512;
 	height = 512;
@@ -149,9 +182,20 @@ void loadScene2()
 // Veach MIS model
 void loadScene3()
 {
+	windowName = "Veach MIS - Monte Carlo Path Tracer";
+	cv::namedWindow(windowName);
+	saveImage = true;
+	MaxRenderCnt = 100;
+
+	pathTracer = PathTracer();
+	pathTracer.pxSampleNum = 1;
+	pathTracer.lightSampleNum = 3;
+	pathTracer.maxPathDepth = 5;
+	pathTracer.maxRenderDepth = MaxRenderCnt;
+
 	path = "../models/Scene03/VeachMIS.obj";
-	width = 288;
-	height = 216;
+	width = 1152;
+	height = 864;
 	image = cv::Mat(height, width, CV_8UC3);
 	logs.out("Load Model...");
 	bool enableInternalLight = false;
@@ -204,17 +248,12 @@ void loadScene3()
 	loadImage();
 }
 
-
 int main(int argc, char *argv[])
 {
-	windowName = "Monte Carlo Path Tracer";
-	cv::namedWindow(windowName);
-	saveImage = true;
-	MaxRenderCnt = 100;
-	// loadScene0();
+	loadScene0();
 	// loadScene1();
 	// loadScene2();
-	loadScene3();
+	// loadScene3();
 	system("pause");
 	return 0;
 }
@@ -222,11 +261,6 @@ int main(int argc, char *argv[])
 void loadImage()
 {
 	static int cnt = 1;
-	pathTracer = PathTracer();
-	pathTracer.pxSampleNum = 1;
-	pathTracer.lightSampleNum = 3;
-	pathTracer.maxPathDepth = 3;
-	pathTracer.maxRenderDepth = MaxRenderCnt;
 
 	logs.out("width: " + to_string(width) + ", height: " + to_string(height));
 
@@ -239,27 +273,28 @@ void loadImage()
 
 		render(image);
 		
-		logs.out("end " + to_string(cnt++) + " iterate");
+		logs.out("end " + to_string(cnt) + " iterate");
 		chrono::time_point<chrono::steady_clock> t_end = chrono::high_resolution_clock::now();
 		double time = chrono::duration_cast<chrono::duration<float>>
 			(t_end - t_start).count();
 		time_sum += time;
 		char content[50];
-		sprintf_s(content, "Time: %.2fs Total: %.2fs Avg: %.2fs", time, time_sum, time_sum / (float)(cnt - 1));
+		sprintf_s(content, "Time: %.2fs Total: %.2fs Avg: %.2fs", time, time_sum, time_sum / (float)cnt);
 		logs.out(content);
 
-		if (saveImage && (cnt - 1) % 5 == 0)
+		if (saveImage && cnt % 1 == 0)
 		{
 			if (!std::experimental::filesystem::exists(resultDir)) {
 				logs.out("Can't find result directory. It will be create in the obj's directory and named result");
 				std::experimental::filesystem::create_directories(resultDir);
 			}
 			char imageName[10];
-			sprintf_s(imageName, "%03d.jpg", cnt - 1);
+			sprintf_s(imageName, "%04d.jpg", cnt);
 			string fileName = resultDir + imageName;
 			cv::imwrite(fileName, image);
 			logs.out("Save image " + string(imageName) + " in the directory: " + resultDir);
 		}
+		cnt++;
 
 		cv::imshow(windowName, image);
 		cv::waitKey(1);
