@@ -26,7 +26,7 @@ void Model::init()
 {
 	colors.clear();
 	colors.resize(3 * width * height);
-	kdTree->buildTree(triangles);
+	kdTree->buildTree(faces);
 }
 
 bool Model::LoadMaterial(string path)
@@ -101,8 +101,8 @@ bool Model::Load(string path)
 	Vec3f vn;
 	string materialName;
 	Material* material = nullptr;
-	int vertex_ids[3];
-	int vertex_normal_ids[3];
+	vector<int> vertex_ids;
+	vector<int> vertex_normal_ids;
 
 	while (file >> type)
 	{
@@ -149,6 +149,8 @@ bool Model::Load(string path)
 		{
 			faceNum++;
 			int index = 0;
+			vertex_ids.clear();
+			vertex_normal_ids.clear();
 			while (true)
 			{
 				char ch = file.get();
@@ -156,6 +158,7 @@ bool Model::Load(string path)
 				else if (ch == '\n' || ch == EOF) break;
 				else file.putback(ch);
 
+				vertex_ids.resize(index + 1);
 				file >> vertex_ids[index];
 				vertex_ids[index] --;
 
@@ -166,6 +169,7 @@ bool Model::Load(string path)
 					split = file.get();
 					if (split == '/')
 					{
+						vertex_normal_ids.resize(index + 1);
 						file >> vertex_normal_ids[index];
 						vertex_normal_ids[index]--;
 					}
@@ -177,6 +181,7 @@ bool Model::Load(string path)
 						split = file.get();
 						if (split == '/')
 						{
+							vertex_normal_ids.resize(index + 1);
 							file >> vertex_normal_ids[index];
 							vertex_normal_ids[index]--;
 						}
@@ -186,6 +191,7 @@ bool Model::Load(string path)
 				else file.putback(split);
 
 				index++;
+				/*
 				if (index >= 3)
 				{
 					Triangle * tri = new Triangle(this, vertex_ids, vertex_normal_ids);
@@ -201,7 +207,11 @@ bool Model::Load(string path)
 					vertex_normal_ids[1] = vertex_normal_ids[2];
 					index = 2;
 				}
+				*/
 			}
+			// move to face
+			Face * face = new Face(this, vertex_ids, vertex_normal_ids, material);
+			faces.push_back(face);
 		}
 	}
 	file.close();
@@ -265,4 +275,31 @@ Vec3f Triangle::getIntersectioNormal(Vec3f &point)
 	abg.abs();
 
 	return normalize(abg.x * vertexNormal[0] + abg.y * vertexNormal[1] + abg.z * vertexNormal[2]);
+}
+
+Face::Face(Model * m, vector<int>& vs_i, vector<int>& ns_i, Material* mater)
+{
+	int v_index[3];
+	int n_index[3];
+	v_index[0] = vs_i[0];
+	v_index[1] = vs_i[1];
+	n_index[0] = ns_i[0];
+	n_index[1] = ns_i[1];
+
+	for (int i = 2; i < vs_i.size(); i++)
+	{
+		v_index[2] = vs_i[i];
+		n_index[2] = ns_i[i];
+		Triangle* tri = new Triangle(m, v_index, n_index);
+		tri->material = mater;
+		box = Box::merge(box,tri->box);
+		triangles.push_back(tri);
+		v_index[1] = v_index[2];
+		n_index[1] = n_index[2];
+	}
+}
+
+Box Face::getBox()
+{
+	return box;
 }

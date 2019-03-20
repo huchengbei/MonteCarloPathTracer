@@ -12,6 +12,7 @@
 using namespace std;
 
 class Triangle;
+class Face;
 class Camera;
 class KDTree;
 
@@ -34,6 +35,7 @@ public:
 
 	Box box;
 	vector<Triangle*> triangles;
+	vector<Face*> faces;
 
 	Model() {}
 	Model(string path, bool isEnableInternalLight = true);
@@ -52,17 +54,13 @@ class Triangle
 public:
 	Vec3f  vertex[3];
 	Vec3f  vertexNormal[3];
-
-	Point3f point;
-	Vec3f edge1, edge2;
-
-	Model* model;
+	Vec3f normal;
+	Mat4 barycentric;
 	Material* material;
 	Box box;
 
-	Vec3f normal;
-
-	Mat4 barycentric;
+	Point3f point;
+	Vec3f edge1, edge2;
 
 	Triangle(Model* m, int v[3], int n[3]);
 
@@ -71,4 +69,17 @@ public:
 	Box getBox();
 
 	Vec3f getIntersectioNormal(Vec3f &point);
+};
+
+class Face
+{
+public:
+	vector<Triangle* > triangles;
+
+	Material* material;
+	Box box;
+
+	Face(Model* m, vector<int> &vs_i, vector<int> &ns_i, Material* mater);
+
+	Box getBox();
 };

@@ -5,7 +5,7 @@
 #include "Model.h"
 using namespace std;
 
-class Triangle;
+class Face;
 enum AXIS { X, Y, Z };
 class KDTree
 {
@@ -16,14 +16,14 @@ public:
 	KDTree* left;
 	KDTree* right;
 
-	Triangle* node;
+	Face* node;
 	bool isLeaf = false;
 
 	KDTree() {}
 
-	KDTree(vector<Triangle *> &triangles);
+	KDTree(vector<Face *> &triangles);
 
-	void buildTree(vector<Triangle *> &triangles);
+	void buildTree(vector<Face *> &triangles);
 
-	AXIS getSplitAxis(vector<Triangle*> &triangles);
+	AXIS getSplitAxis(vector<Face*> &triangles);
 };

@@ -49,6 +49,18 @@ bool intersect(Triangle *trangle, Ray& ray, Point3f& point, Material* &material,
 	return false;
 }
 
+bool intersect(Face * face, Ray & ray, Point3f & point, Material *& material, Vec3f & normal)
+{
+	bool ok = false;
+	for (Triangle* &tri : face->triangles)
+	{
+		ok = intersect(tri, ray, point, material, normal);
+		if (ok)
+			return ok;
+	}
+	return false;
+}
+
 bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material* &material, Vec3f& normal, JudgeOrCal jOC)
 {
 	if (!intersect(kdTree->box, ray))

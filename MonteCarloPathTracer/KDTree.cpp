@@ -5,27 +5,27 @@
 #include "KDTree.h"
 #include "Model.h"
 
-KDTree::KDTree(vector<Triangle *> &triangles)
+KDTree::KDTree(vector<Face *> &faces)
 {
-	buildTree(triangles);
+	buildTree(faces);
 }
 
-void KDTree::buildTree(vector<Triangle *> &triangles)
+void KDTree::buildTree(vector<Face *> &faces)
 {
-	int size = (int)(triangles.size());
-	splitAxis = getSplitAxis(triangles);
+	int size = (int)(faces.size());
+	splitAxis = getSplitAxis(faces);
 
 	if (size == 1)
 	{
 		isLeaf = true;
-		node = triangles[0];
+		node = faces[0];
 		left = nullptr;
 		right = nullptr;
 	}
 	else
 	{
-		vector<Triangle *> leftVec;
-		vector<Triangle *> rightVec;
+		vector<Face *> leftVec;
+		vector<Face *> rightVec;
 
 		float minVal = FLT_MAX;
 		float maxVal = -FLT_MAX;
@@ -35,18 +35,18 @@ void KDTree::buildTree(vector<Triangle *> &triangles)
 		float pivot = (maxVal + minVal) / 2;
 
 		Box bbox;
-		for (int i = 0; i < triangles.size(); i++)
+		for (int i = 0; i < faces.size(); i++)
 		{
-			bbox = triangles[i]->getBox();
+			bbox = faces[i]->getBox();
 			float center = (bbox.getMaxCoord(splitAxis) + bbox.getMinCoord(splitAxis)) / 2;
 			if (center < pivot)
-				leftVec.push_back(triangles[i]);
+				leftVec.push_back(faces[i]);
 			else
-				rightVec.push_back(triangles[i]);
+				rightVec.push_back(faces[i]);
 		}
 
 		int index;
-		if (leftVec.size() == triangles.size())
+		if (leftVec.size() == faces.size())
 		{
 			float maxCenter = -FLT_MAX;
 			for (int i = 0; i < leftVec.size(); i++)
@@ -62,7 +62,7 @@ void KDTree::buildTree(vector<Triangle *> &triangles)
 			rightVec.push_back(leftVec[index]);
 			leftVec.erase(leftVec.begin() + index);
 		}
-		else if (rightVec.size() == triangles.size())
+		else if (rightVec.size() == faces.size())
 		{
 			float minCenter = FLT_MAX;
 			for (int i = 0; i < rightVec.size(); i++)
@@ -86,11 +86,11 @@ void KDTree::buildTree(vector<Triangle *> &triangles)
 }
 
 //cal box of this level & get split axis
-AXIS KDTree::getSplitAxis(vector<Triangle*> &triangles)
+AXIS KDTree::getSplitAxis(vector<Face*> &faces)
 {
-	for (Triangle* &tri : triangles)
+	for (Face* &face : faces)
 	{
-		box = Box::merge(box, tri->getBox());
+		box = Box::merge(box, face->getBox());
 	}
 
 	Vec3f diff = box.high - box.low;

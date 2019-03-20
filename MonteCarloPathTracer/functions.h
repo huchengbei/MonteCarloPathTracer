@@ -12,6 +12,8 @@ bool intersect(Box& box, Ray& ray);
 
 bool intersect(Triangle *trangle, Ray& ray, Point3f& point, Material* &material, Vec3f& normal);
 
+bool intersect(Face *face, Ray& ray, Point3f& point, Material* &material, Vec3f& normal);
+
 bool intersect(KDTree* kdTree, Ray& ray, Point3f& point, Material* &material, Vec3f& normal, JudgeOrCal jOC = JudgeOrCal::CAL);
 
 bool intersect(Model& model, Ray& ray, Point3f& point, Material* &material, Vec3f& normal);
