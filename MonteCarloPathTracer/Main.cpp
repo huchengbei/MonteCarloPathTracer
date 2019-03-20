@@ -19,7 +19,7 @@ int height;
 bool saveImage = true; // saveImage
 double  time_sum;
 string path;
-string windowName; // saveImage
+string windowName;
 string resultDir;
 
 int MaxRenderCnt = 100;
@@ -264,8 +264,8 @@ void loadImage()
 
 	logs.out("width: " + to_string(width) + ", height: " + to_string(height));
 
-	int pos = (int)(path.find_last_of('/'));
-	resultDir = path.substr(0, pos + 1) + "results/";
+	int pos = (int)(path.find_last_of('.'));
+	resultDir = path.substr(0, pos) + "_results/";
 	while (cnt <= MaxRenderCnt)
 	{
 		chrono::time_point<chrono::steady_clock> t_start = std::chrono::high_resolution_clock::now();
