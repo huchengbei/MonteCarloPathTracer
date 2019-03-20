@@ -17,6 +17,7 @@ cv::Mat image;
 int width;
 int height;
 bool saveImage = true; // saveImage
+bool log2file = true;
 double  time_sum;
 string path;
 string windowName;
@@ -36,7 +37,15 @@ void loadScene0()
 	windowName = "Classical - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	log2file = true;
 	MaxRenderCnt = 100;
+
+	path = "../models/scene01.obj";
+	int pos = (int)(path.find_last_of('.'));
+	resultDir = path.substr(0, pos) + "_results/";
+
+	if (log2file)
+		logs.setPath(path.substr(0, pos) + ".log");
 
 	pathTracer = PathTracer();
 	pathTracer.pxSampleNum = 1;
@@ -44,13 +53,13 @@ void loadScene0()
 	pathTracer.maxPathDepth = 5;
 	pathTracer.maxRenderDepth = MaxRenderCnt;
 
-	path = "../models/scene01.obj";
 	width = 500;
 	height = 500;
 	image = cv::Mat(height, width, CV_8UC3);
 	logs.out("Load Model...");
 	bool enableInternalLight = false;
 	model = new Model(path, enableInternalLight);
+	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
 	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
@@ -67,11 +76,11 @@ void loadScene0()
 
 	Point3f center = (model->box.high + model->box.low) / 2;
 	float scale = length(model->box.high - model->box.low) / 2;
-	Point3f pos = Point3f(center.x, center.y, center.z + 1.5 * scale);
+	Point3f position = Point3f(center.x, center.y, center.z + 1.5 * scale);
 	Vec3f up = Vec3f(0, 1, 0);
 	fov = 70;
 
-	model->camera = new Camera(pos, center, up);
+	model->camera = new Camera(position, center, up);
 	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
@@ -87,7 +96,15 @@ void loadScene1()
 	windowName = "Cup - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	log2file = true;
 	MaxRenderCnt = 100;
+
+	path = "../models/Scene01/cup.obj";
+	int pos = (int)(path.find_last_of('.'));
+	resultDir = path.substr(0, pos) + "_results/";
+
+	if (log2file)
+		logs.setPath(path.substr(0, pos) + ".log");
 
 	pathTracer = PathTracer();
 	pathTracer.pxSampleNum = 1;
@@ -95,13 +112,13 @@ void loadScene1()
 	pathTracer.maxPathDepth = 5;
 	pathTracer.maxRenderDepth = MaxRenderCnt;
 
-	path = "../models/Scene01/cup.obj";
 	width = 512;
 	height = 512;
 	image = cv::Mat(height, width, CV_8UC3);
 	logs.out("Load Model...");
 	bool enableInternalLight = false;
 	model = new Model(path, enableInternalLight);
+	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
 	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
@@ -116,12 +133,12 @@ void loadScene1()
 	// add external light
 	lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, area, normal));
 
+	Point3f position = Point3f(0.0, 0.64, 0.52);
 	Point3f center = Color3f(0.0, 0.40, 0.3);
-	Point3f pos = Point3f(0.0, 0.64, 0.52);
 	Vec3f up = Vec3f(0, 1, 0);
 	fov = 60;
 
-	model->camera = new Camera(pos, center, up);
+	model->camera = new Camera(position, center, up);
 	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
@@ -137,7 +154,15 @@ void loadScene2()
 	windowName = "Room - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	log2file = true;
 	MaxRenderCnt = 100;
+
+	path = "../models/Scene02/room.obj";
+	int pos = (int)(path.find_last_of('.'));
+	resultDir = path.substr(0, pos) + "_results/";
+
+	if (log2file)
+		logs.setPath(path.substr(0, pos) + ".log");
 
 	pathTracer = PathTracer();
 	pathTracer.pxSampleNum = 1;
@@ -145,13 +170,13 @@ void loadScene2()
 	pathTracer.maxPathDepth = 5;
 	pathTracer.maxRenderDepth = MaxRenderCnt;
 
-	path = "../models/Scene02/room.obj";
 	width = 512;
 	height = 512;
 	image = cv::Mat(height, width, CV_8UC3);
 	logs.out("Load Model...");
 	bool enableInternalLight = false;
 	model = new Model(path, enableInternalLight);
+	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
 	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
@@ -164,12 +189,12 @@ void loadScene2()
 	// add external light
 	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
 
+	Point3f position = Point3f(0.0, 0.0, 0.4);
 	Point3f center = Color3f(0.0, 0.0, 0.0);
-	Point3f pos = Point3f(0.0, 0.0, 0.4);
 	Vec3f up = Vec3f(0, 1, 0);
 	fov = 50;
 
-	model->camera = new Camera(pos, center, up);
+	model->camera = new Camera(position, center, up);
 	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
@@ -185,7 +210,15 @@ void loadScene3()
 	windowName = "Veach MIS - Monte Carlo Path Tracer";
 	cv::namedWindow(windowName);
 	saveImage = true;
+	log2file = true;
 	MaxRenderCnt = 100;
+
+	path = "../models/Scene03/VeachMIS.obj";
+	int pos = (int)(path.find_last_of('.'));
+	resultDir = path.substr(0, pos) + "_results/";
+
+	if (log2file)
+		logs.setPath(path.substr(0, pos) + ".log");
 
 	pathTracer = PathTracer();
 	pathTracer.pxSampleNum = 1;
@@ -193,13 +226,13 @@ void loadScene3()
 	pathTracer.maxPathDepth = 5;
 	pathTracer.maxRenderDepth = MaxRenderCnt;
 
-	path = "../models/Scene03/VeachMIS.obj";
 	width = 1152;
 	height = 864;
 	image = cv::Mat(height, width, CV_8UC3);
 	logs.out("Load Model...");
 	bool enableInternalLight = false;
 	model = new Model(path, enableInternalLight);
+	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
 	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
@@ -232,12 +265,12 @@ void loadScene3()
 	emission = Color3f(1.23457, 1.23457, 1.23457);
 	lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
 
+	Point3f position = Point3f(0.0, 2.0, 15.0);
 	Point3f center = Color3f(0.0, 1.69521, 14.0476);
-	Point3f pos = Point3f(0.0, 2.0, 15.0);
 	Vec3f up = Vec3f(0.0, 0.952421, -0.304787);
 	fov = 38;
 
-	model->camera = new Camera(pos, center, up);
+	model->camera = new Camera(position, center, up);
 	Camera* &camera = model->camera;
 	camera->setViewPort(fov, (float)height / (float)width);
 
@@ -264,8 +297,6 @@ void loadImage()
 
 	logs.out("width: " + to_string(width) + ", height: " + to_string(height));
 
-	int pos = (int)(path.find_last_of('.'));
-	resultDir = path.substr(0, pos) + "_results/";
 	while (cnt <= MaxRenderCnt)
 	{
 		chrono::time_point<chrono::steady_clock> t_start = std::chrono::high_resolution_clock::now();
