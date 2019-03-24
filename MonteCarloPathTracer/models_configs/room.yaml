@@ -5,9 +5,9 @@ log2file: true
 MaxRenderCnt: 100
 enableInternalLight: false
 
-objPath: ../models/Scene01/room.obj
-resultDir: ../models/Scene01/room_results/
-logPath: ../models/Scene01/room.log
+objPath: ../models/Room/room.obj
+resultDir: ../models/Room/room_results/
+logPath: ../models/Room/room.log
 
 pathTracer:
     pxSampleNum: 1

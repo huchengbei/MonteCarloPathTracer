@@ -5,9 +5,9 @@ log2file: true
 MaxRenderCnt: 100
 enableInternalLight: false
 
-objPath: ../models/scene01.obj
-resultDir: ../models/scene01_results/
-logPath: ../models/scene01.log
+objPath: ../models/Classical/scene01.obj
+resultDir: ../models/Classical/scene01_results/
+logPath: ../models/Classical/scene01.log
 
 pathTracer:
     pxSampleNum: 1

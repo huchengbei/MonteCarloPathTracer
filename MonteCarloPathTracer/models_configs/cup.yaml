@@ -5,9 +5,9 @@ log2file: true
 MaxRenderCnt: 100
 enableInternalLight: false
 
-objPath: ../models/Scene02/cup.obj
-resultDir: ../models/Scene02/cup_results/
-logPath: ../models/Scene02/cup.log
+objPath: ../models/Cup/cup.obj
+resultDir: ../models/Cup/cup_results/
+logPath: ../models/Cup/cup.log
 
 pathTracer:
     pxSampleNum: 1
