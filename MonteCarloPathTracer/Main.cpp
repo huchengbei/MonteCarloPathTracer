@@ -13,21 +13,21 @@
 #include "iomanip"
 using namespace std;
 
-Log logs;
+Log logs;	// output prom log
 cv::Mat image;
 int width;
 int height;
 bool saveImage = true; // saveImage
-int savePreImage = 5;
-bool log2file = true;
-bool enableInternalLight = false;
-double  time_sum;
-string path;
-string windowName;
-string resultDir;
-string logPath;
+int savePreImage = 5;	// save image when render (savepreimage) times
+bool log2file = true;	// is or not output the log to file
+bool enableInternalLight = false; // enable the internallight
+double  time_sum;	//total render time
+string path;	//obj file path
+string windowName;	// show window name
+string resultDir;	// save image in resultDir
+string logPath;		//output the log in logPath
 
-int MaxRenderCnt = 100;
+int MaxRenderCnt = 100;	//the max render times
 float fov;
 PathTracer pathTracer;
 Model*  model;
@@ -38,7 +38,7 @@ void render(cv::Mat &image);
 
 int main(int argc, char *argv[])
 {
-// 	string path("models_configs/classical.yaml");
+//	string path("models_configs/classical.yaml");
 	if (argc < 2)
 	{
 		cout << "You should use this pram by this format:" << endl;
@@ -134,10 +134,11 @@ void LoadScene(string path)
 	}
 
 	logs.out("Init Model And buildTree...");
-	model->init();
-	logs.out("Init Model And buildTree...finished");
-	loadImage();
-
+	if (model->init())
+	{
+		logs.out("Init Model And buildTree...finished");
+		loadImage();
+	}
 }
 
 void loadImage()
