@@ -24,6 +24,7 @@ public:
 	Camera* camera;
 	KDTree* kdTree;
 	vector<float> colors;
+	string path;
 	int facesNum = 0;
 	int trianglesNum = 0;
 
@@ -40,7 +41,7 @@ public:
 	Model() {}
 	Model(string path, bool isEnableInternalLight = true);
 
-	void init();
+	bool init();
 		
 	bool LoadMaterial(string path);
 

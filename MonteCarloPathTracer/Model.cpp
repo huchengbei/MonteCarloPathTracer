@@ -6,26 +6,29 @@
 
 using namespace std;
 
-Model::Model(string path, bool isEnableInternalLight)
+Model::Model(string p, bool isEnableInternalLight)
 {
 	enableInternalLight = isEnableInternalLight;
+	path = p;
 	kdTree = new KDTree();
 	lights = new vector<Light>;
+}
+
+bool Model::init()
+{
 	if (Load(path))
 	{
 		cout << "\tLoad " << path << " successful" << endl;
 	}
 	else
 	{
-		cout << "\tLoad " << path << "error." << endl;
+		cout << "\tLoad " << path << " error." << endl;
+		return false;
 	}
-}
-
-void Model::init()
-{
 	colors.clear();
 	colors.resize(3 * width * height);
 	kdTree->buildTree(faces);
+	return true;
 }
 
 bool Model::LoadMaterial(string path)
@@ -201,6 +204,7 @@ bool Model::Load(string path)
 	return returnValue;
 }
 
+// get rays from eye
 vector<Ray> Model::getRays(int x, int y, int px_sample_num)
 {
 	vector<Ray> rays;
