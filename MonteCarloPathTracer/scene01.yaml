@@ -1,0 +1,36 @@
+windowName: Classical - Monte Carlo Path Tracer
+saveImage: true
+savePreImage: 1
+log2file: true
+MaxRenderCnt: 100
+enableInternaLight: false
+
+objPath: ../models/scene01.obj
+resultDir: ../models/scene01_results/
+logPath: ../models/scene01.log
+
+pathTracer:
+    pxSampleNum: 1
+    lightSampleNum: 3
+    maxPathDepth: 5
+    maxRenderDepth: 100
+
+model:
+    width: 500
+    height: 500
+    ambient: [0.2, 0.2, 0.2]
+
+camera:
+    position: [0, 5, 14]
+    lookat: [0, 5, 0]
+    up: [0, 1, 0]
+    fov: 70
+    
+lights:
+    - type: POLYGON
+      center: [0, 9.8, 0]
+      radius: 0.033
+      emission: [50, 50, 50]
+      area: 4
+      normal: [0, -1, 0]
+      

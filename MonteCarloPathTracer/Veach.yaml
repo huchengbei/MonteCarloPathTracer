@@ -1,0 +1,50 @@
+windowName: Veach MIS - Monte Carlo Path Tracer
+saveImage: true
+savePreImage: 1
+log2file: true
+MaxRenderCnt: 100
+enableInternaLight: false
+
+objPath: ../models/Scene03/VeachMIS.obj
+resultDir: ../models/Scene03/VeachMIS_results/
+logPath: ../models/Scene03/VeachMIS.log
+
+pathTracer:
+    pxSampleNum: 1
+    lightSampleNum: 3
+    maxPathDepth: 5
+    maxRenderDepth: 100
+
+model:
+    width: 1152
+    height: 864
+    ambient: [0.2, 0.2, 0.2]
+
+camera:
+    position: [0.0, 2.0, 15.0]
+    lookat: [0.0, 1.69521, 14.0476]
+    up: [0.0, 0.952421, -0.304787]
+    fov: 38
+    
+lights:
+    - type: SPHERE
+      center: [-10, 10, 4]
+      radius: 0.5
+      emission: [800, 800, 800]
+    - type: SPHERE
+      center: [3.75, 0, 0]
+      radius: 0.033
+      emission: [901.803, 901.803, 901.803]
+    - type: SPHERE
+      center: [1.25, 0, 0]
+      radius: 0.1
+      emission: [100,100,100]
+    - type: SPHERE
+      center: [-1.25, 0, 0]
+      radius: 0.3
+      emission: [11.1111, 11.1111, 11.1111]
+    - type: SPHERE
+      center: [-3.75, 0, 0]
+      radius: 0.9
+      emission: [1.23457, 1.23457, 1.234570]
+      

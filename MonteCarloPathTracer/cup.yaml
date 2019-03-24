@@ -1,0 +1,36 @@
+windowName: Cup - Monte Carlo Path Tracer
+saveImage: true
+savePreImage: 1
+log2file: true
+MaxRenderCnt: 100
+enableInternaLight: false
+
+objPath: ../models/Scene02/cup.obj
+resultDir: ../models/Scene02/cup_results/
+logPath: ../models/Scene02/cup.log
+
+pathTracer:
+    pxSampleNum: 1
+    lightSampleNum: 3
+    maxPathDepth: 5
+    maxRenderDepth: 100
+
+model:
+    width: 512
+    height: 512
+    ambient: [0.2, 0.2, 0.2]
+
+camera:
+    position: [0, 0.64, 0.52]
+    lookat: [0, 0.4, 0.3]
+    up: [0, 1, 0]
+    fov: 60
+    
+lights:
+    - type: POLYGON
+      center: [-2.758771896, 1.5246, 0]
+      radius: 0.5
+      emission: [40, 40, 40]
+      area: 1
+      normal: [1, 0, 0]
+      

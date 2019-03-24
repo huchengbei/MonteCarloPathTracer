@@ -1,6 +1,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include "yaml-cpp/yaml.h"
 #include "iostream"
 #include <experimental/filesystem>
 #include "string"
@@ -23,6 +24,7 @@ double  time_sum;
 string path;
 string windowName;
 string resultDir;
+string logPath;
 
 int MaxRenderCnt = 100;
 float fov;
@@ -286,12 +288,105 @@ void loadScene0()
 	loadImage();
 }
 
+void LoadScene(string path)
+{
+	YAML::Node config = YAML::LoadFile(path);
+
+	windowName = config["windowName"].as<string>();
+	cv::namedWindow(windowName);
+	saveImage = config["saveImage"].as<bool>();
+	savePreImage = config["savePreImage"].as<int>();
+	log2file = config["log2file"].as<bool>();
+	MaxRenderCnt = config["MaxRenderCnt"].as<int>();
+
+	path = config["objPath"].as<string>();
+	resultDir = config["resultDir"].as<string>();
+	logPath = config["logPath"].as<string>();
+
+	if (log2file)
+		logs.setPath(logPath);
+
+	YAML::Node pTConfig = config["pathTracer"];
+	pathTracer = PathTracer();
+	pathTracer.pxSampleNum = pTConfig["pxSampleNum"].as<int>();
+	pathTracer.lightSampleNum = pTConfig["lightSampleNum"].as<int>();
+	pathTracer.maxPathDepth = pTConfig["maxPathDepth"].as<int>();
+	// pathTracer.maxRenderDepth = pTConfig["maxRenderDepth"].as<int>();
+	pathTracer.maxRenderDepth = MaxRenderCnt;
+
+	YAML::Node modelConfig = config["model"];
+	width = modelConfig["width"].as<int>();
+	height = modelConfig["height"].as<int>();
+	image = cv::Mat(height, width, CV_8UC3);
+	logs.out("Load Model...");
+	bool enableInternalLight = false;
+	model = new Model(path, enableInternalLight);
+	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
+	logs.out("Load Model...finished");
+	model->width = width;
+	model->height = height;
+	YAML::Node ambientConfig = modelConfig["ambient"];
+	model->ambient = Color3f(ambientConfig[0].as<float>(), ambientConfig[1].as<float>(), ambientConfig[2].as<float>());
+
+	YAML::Node cameraConfig = config["camera"];
+	YAML::Node cameraCenterConfig = cameraConfig["lookat"];
+	Point3f cameraCenter = Point3f(cameraCenterConfig[0].as<float>(), cameraCenterConfig[1].as<float>(), cameraCenterConfig[2].as<float>());
+	YAML::Node positionConfig = cameraConfig["position"];
+	Point3f position = Point3f(positionConfig[0].as<float>(), positionConfig[1].as<float>(), positionConfig[2].as<float>());
+	YAML::Node upConfig = cameraConfig["up"];
+	Vec3f up = Vec3f(upConfig[0].as<float>(), upConfig[1].as<float>(), upConfig[2].as<float>());
+	fov = cameraConfig["fov"].as<float>();
+
+	model->camera = new Camera(position, cameraCenter, up);
+	Camera* &camera = model->camera;
+	camera->setViewPort(fov, (float)height / (float)width);
+
+	vector<Light>* lights = model->lights;
+	// add external light
+	YAML::Node lightsConfig = config["lights"];
+	for (int i = 0; i < lightsConfig.size(); i++)
+	{
+		YAML::Node lightConfig = lightsConfig[i];
+		YAML::Node lightCenterConfig = lightConfig["center"];
+		Point3f lightCenter = Point3f(lightCenterConfig[0].as<float>(), lightCenterConfig[1].as<float>(), lightCenterConfig[2].as<float>());
+
+		float radius = lightConfig["radius"].as<float>();
+
+		YAML::Node emissionConfig = lightConfig["emission"];
+		Color3f emission = Point3f(emissionConfig[0].as<float>(), emissionConfig[1].as<float>(), emissionConfig[2].as<float>());
+
+		string type = lightConfig["type"].as<string>();
+		if (type == "POLYGON")
+		{
+			float area = lightConfig["area"].as<float>();
+			YAML::Node normalConfig = lightConfig["normal"];
+			Vec3f normal = Vec3f(normalConfig[0].as<float>(), normalConfig[1].as<float>(), normalConfig[2].as<float>());
+			lights->push_back(Light(Light::TYPE::POLYGON, lightCenter, radius, emission * 2.0f, area, normal));
+		}
+		else
+		{
+			lights->push_back(Light(Light::TYPE::SPHERE, lightCenter, radius, emission * 2.0f));
+		}
+	}
+
+	logs.out("Init Model And buildTree...");
+	model->init();
+	logs.out("Init Model And buildTree...finished");
+	loadImage();
+
+}
+
 int main(int argc, char *argv[])
 {
-	loadSceneRoom();
+	// loadSceneRoom();
 	// loadSceneCup();
 	// loadSceneVeach();
 	// loadScene0();
+	// string path = "scene01.yaml";
+	// string path = "cup.yaml";
+	string path = "room.yaml";
+	// string path = "Veach.yaml";
+	LoadScene(path);
 	system("pause");
 	return 0;
 }

@@ -1,0 +1,34 @@
+windowName: Room - Monte Carlo Path Tracer
+saveImage: true
+savePreImage: 1
+log2file: true
+MaxRenderCnt: 100
+enableInternaLight: false
+
+objPath: ../models/Scene01/room.obj
+resultDir: ../models/Scene01/room_results/
+logPath: ../models/Scene01/room.log
+
+pathTracer:
+    pxSampleNum: 1
+    lightSampleNum: 3
+    maxPathDepth: 5
+    maxRenderDepth: 100
+
+model:
+    width: 512
+    height: 512
+    ambient: [0.2, 0.2, 0.2]
+
+camera:
+    position: [0.0, 0.0, 4]
+    lookat: [0.0, 0.0, 0.0]
+    up: [0.0, 1.0, 0.0]
+    fov: 50
+    
+lights:
+    - type: SPHERE
+      center: [0.0, 1.589, -1.274]
+      radius: 0.2
+      emission: [50, 50, 40]
+      

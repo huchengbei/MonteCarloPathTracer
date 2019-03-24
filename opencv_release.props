@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libyaml-cppmd.lib;opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
