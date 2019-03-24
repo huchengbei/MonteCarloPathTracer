@@ -52,12 +52,12 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void LoadScene(string path)
+void LoadScene(string configPath)
 {
-	YAML::Node config = YAML::LoadFile(path);
+	logs.out("config file path: " + configPath);
+	YAML::Node config = YAML::LoadFile(configPath);
 
 	windowName = config["windowName"].as<string>();
-	cv::namedWindow(windowName);
 	saveImage = config["saveImage"].as<bool>();
 	savePreImage = config["savePreImage"].as<int>();
 	log2file = config["log2file"].as<bool>();
@@ -82,11 +82,8 @@ void LoadScene(string path)
 	width = modelConfig["width"].as<int>();
 	height = modelConfig["height"].as<int>();
 	image = cv::Mat(height, width, CV_8UC3);
-	logs.out("Load Model...");
 	enableInternalLight = config["enableInternalLight"].as<bool>();
 	model = new Model(path, enableInternalLight);
-	logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
-	logs.out("Load Model...finished");
 	model->width = width;
 	model->height = height;
 	YAML::Node ambientConfig = modelConfig["ambient"];
@@ -136,6 +133,8 @@ void LoadScene(string path)
 	logs.out("Init Model And buildTree...");
 	if (model->init())
 	{
+		cv::namedWindow(windowName);
+		logs.out("Faces: " + to_string(model->facesNum) + "  Triangles: " + to_string(model->trianglesNum));
 		logs.out("Init Model And buildTree...finished");
 		loadImage();
 	}
