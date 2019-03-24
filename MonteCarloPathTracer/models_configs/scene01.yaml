@@ -3,7 +3,7 @@ saveImage: true
 savePreImage: 1
 log2file: true
 MaxRenderCnt: 100
-enableInternaLight: false
+enableInternalLight: false
 
 objPath: ../models/scene01.obj
 resultDir: ../models/scene01_results/

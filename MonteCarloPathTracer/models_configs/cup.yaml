@@ -3,7 +3,7 @@ saveImage: true
 savePreImage: 1
 log2file: true
 MaxRenderCnt: 100
-enableInternaLight: false
+enableInternalLight: false
 
 objPath: ../models/Scene02/cup.obj
 resultDir: ../models/Scene02/cup_results/
