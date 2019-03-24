@@ -1,0 +1,36 @@
+windowName: Vase - Monte Carlo Path Tracer
+saveImage: true
+savePreImage: 1
+log2file: true
+MaxRenderCnt: 100
+enableInternalLight: false
+
+objPath: ../models/vase/vase.obj
+resultDir: ../models/vase/vase_results/
+logPath: ../models/vase/vase.log
+
+pathTracer:
+    pxSampleNum: 1
+    lightSampleNum: 3
+    maxPathDepth: 5
+    maxRenderDepth: 100
+
+model:
+    width: 512
+    height: 512
+    ambient: [0.2, 0.2, 0.2]
+
+camera:
+    position: [14, 7, -4]
+    lookat: [4, 6, 0]
+    up: [0.0, 1.0, 0.0]
+    fov: 50
+    
+lights:
+    - type: POLYGON
+      center: [-5, 20, -5]
+      radius: 30
+      area: 3600
+      normal: [0, 1, 0]
+      emission: [15, 15, 15]
+      
