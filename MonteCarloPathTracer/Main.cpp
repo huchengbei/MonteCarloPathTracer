@@ -38,6 +38,7 @@ void render(cv::Mat &image);
 
 int main(int argc, char *argv[])
 {
+// 	string path("models_configs/classical.yaml");
 	if (argc < 2)
 	{
 		cout << "You should use this pram by this format:" << endl;
@@ -45,7 +46,6 @@ int main(int argc, char *argv[])
 		system("pause");
 		return 0;
 	}
-	// string path = "cup.yaml";
 	string path(argv[1]);
 	LoadScene(path);
 	system("pause");
