@@ -94,3 +94,12 @@ Color trace(ray)
 	return color
 }
 ```
+
+## ‰÷»æΩ·π˚Õº
+|Name|iter-1|iter-50|iter-100|
+|---|---|---|---|
+|Cup|![](pics/cup/0001.jpg)|![](pics/cup/0050.jpg)|![](pics/cup/0100.jpg)|
+|Room|![](pics/room/0001.jpg)|![](pics/room/0050.jpg)|![](pics/room/0100.jpg)|
+|VeachMIS|![](pics/VeachMIS/0001.jpg)|![](pics/VeachMIS/0050.jpg)|![](pics/VeachMIS/0100.jpg)|
+|Classical|![](pics/classical/0001.jpg)|![](pics/classical/0050.jpg)|![](pics/classical/0100.jpg)|
+|Vase|![](pics/vase/0001.jpg)|![](pics/vase/0050.jpg)|![](pics/vase/0100.jpg)|
