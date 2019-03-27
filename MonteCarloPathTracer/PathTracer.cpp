@@ -1,6 +1,4 @@
-#pragma once
 #include "PathTracer.h"
-#include "omp.h"
 #include "iostream"
 #include "vector"
 
@@ -42,6 +40,7 @@ Vec3f PathTracer::BREFImportanceSample(Vec3f &direction, float Ns, REFLECT_TYPE 
 	return normalize(sample.x * right + sample.y * direction + sample.z * front);
 }
 
+// 随机获取光线
 Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material* &material, Vec3f &normal)
 {
 	Vec3f direction;
@@ -102,6 +101,7 @@ Ray PathTracer::monteCarloSample(Ray &ray, Point3f &point, Material* &material, 
 	}
 }
 
+// 追踪，设置最大追踪深度
 Color3f PathTracer::trace(Model &model, Ray &ray, int depth)
 {
 	Point3f point;
@@ -212,7 +212,6 @@ vector<float> PathTracer::render(Model& model)
 	{
 		return model.colors;
 	}
-//#pragma omp parallel for schedule(dynamic, 2)
 	for (int y = 0; y < model.height; ++y)
 	{
 		for (int x = 0; x < model.width; ++x)
@@ -235,10 +234,13 @@ vector<float> PathTracer::render(Model& model)
 
 	return model.colors;
 
+	/* 最初为调试程序，临时写的获取一些像素颜色
 	vector<float> colors = getColors(model.width, model.height);
 	return colors;
+	*/
 }
 
+// 临时获取像素颜色，最初测试用
 vector<float> PathTracer::getColors(int w, int h)
 {
 	vector<float> colors;
