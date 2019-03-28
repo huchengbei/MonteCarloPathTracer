@@ -100,10 +100,27 @@ Color trace(ray)
 ```
 
 ## 渲染结果图
-|Name|iter-1|iter-50|iter-100|
+渲染结果相对还是比较不错的，渲染50次基本能得到比较好的结果，75次比较细腻了。
+
+在我使用的几个模型中，第100次与第75次几乎没有差距。
+
+第1、50、75次迭代的比较
+
+|Name|iter-1|iter-50|iter-75|
 |---|---|---|---|
-|Cup|![](pics/cup/0001.jpg)|![](pics/cup/0050.jpg)|![](pics/cup/0100.jpg)|
-|Room|![](pics/room/0001.jpg)|![](pics/room/0050.jpg)|![](pics/room/0100.jpg)|
-|VeachMIS|![](pics/VeachMIS/0001.jpg)|![](pics/VeachMIS/0050.jpg)|![](pics/VeachMIS/0100.jpg)|
-|Classical|![](pics/classical/0001.jpg)|![](pics/classical/0050.jpg)|![](pics/classical/0100.jpg)|
-|Vase|![](pics/vase/0001.jpg)|![](pics/vase/0050.jpg)|![](pics/vase/0100.jpg)|
+|Cup|![](pics/cup/0001.jpg)|![](pics/cup/0050.jpg)|![](pics/cup/0075.jpg)|
+|Room|![](pics/room/0001.jpg)|![](pics/room/0050.jpg)|![](pics/room/0075.jpg)|
+|VeachMIS|![](pics/VeachMIS/0001.jpg)|![](pics/VeachMIS/0050.jpg)|![](pics/VeachMIS/0075.jpg)|
+|Classical|![](pics/classical/0001.jpg)|![](pics/classical/0050.jpg)|![](pics/classical/0075.jpg)|
+|Vase|![](pics/vase/0001.jpg)|![](pics/vase/0050.jpg)|![](pics/vase/0075.jpg)|
+
+
+第75次与第100次的比较
+
+|Name|iter-75|iter-100|
+|---|---|---|
+|Cup|![](pics/cup/0075.jpg)|![](pics/cup/0100.jpg)|
+|Room|![](pics/room/0075.jpg)|![](pics/room/0100.jpg)|
+|VeachMIS|![](pics/VeachMIS/0075.jpg)|![](pics/VeachMIS/0100.jpg)|
+|Classical![](pics/classical/0075.jpg)|![](pics/classical/0100.jpg)|
+|Vase|![](pics/vase/0075.jpg)|![](pics/vase/0100.jpg)|
