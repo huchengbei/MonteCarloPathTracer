@@ -1,6 +1,8 @@
 # Monte Carlo Path Tracer
 CG作业 蒙特卡洛路径追踪
 
+项目地址： https://github.com/huchengbei/MonteCarloPathTracer
+
 ## 平台环境
 **操作系统：** Win10 x64
 
@@ -122,5 +124,5 @@ Color trace(ray)
 |Cup|![](pics/cup/0075.jpg)|![](pics/cup/0100.jpg)|
 |Room|![](pics/room/0075.jpg)|![](pics/room/0100.jpg)|
 |VeachMIS|![](pics/VeachMIS/0075.jpg)|![](pics/VeachMIS/0100.jpg)|
-|Classical![](pics/classical/0075.jpg)|![](pics/classical/0100.jpg)|
+|Classical|![](pics/classical/0075.jpg)|![](pics/classical/0100.jpg)|
 |Vase|![](pics/vase/0075.jpg)|![](pics/vase/0100.jpg)|
